@@ -1,0 +1,61 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Publish Chrome Web Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          check-latest: true
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - run: yarn --immutable
+      - run: yarn format:check
+      - run: yarn lint
+
+      - name: Get version number
+        id: semver
+        run: ./scripts/semver.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update theme version number
+        if: ${{ steps.semver.outputs.VERSION != '' }}
+        run: sed -i 's/0.0.0/${{ steps.semver.outputs.VERSION }}/g' manifest.json
+
+      - run: yarn prod
+        if: ${{ steps.semver.outputs.VERSION != '' }}
+
+      - run: zip -r release-${{ steps.semver.outputs.VERSION }}.zip *
+        if: ${{ steps.semver.outputs.VERSION != '' }}
+        working-directory: dist
+
+      - name: Upload to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v4.0.0
+        if: ${{ steps.semver.outputs.VERSION != '' }}
+        with:
+          file-path: dist/release-${{ steps.semver.outputs.VERSION }}.zip
+          extension-id: YOUR_EXTENSION_ID
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          refresh-token: ${{ secrets.REFRESH_TOKEN }}
+
+      - run: yarn release
+        if: ${{ steps.semver.outputs.VERSION != '' }}
+        env:
+          VERSION: ${{ steps.semver.outputs.VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
