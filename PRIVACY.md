@@ -22,7 +22,7 @@ The Vivino Chrome extension does not store any data, so there is no need to prot
 
 5. How to contact us
 
-If you have any questions about this privacy policy, please [file an issue](https://github.com/hyldmo/gettowork/issues/new).
+If you have any questions about this privacy policy, please [file an issue](https://github.com/hyldmo/lock-in/issues/new).
 
 6. Changes to this privacy policy
 

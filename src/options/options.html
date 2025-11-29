@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Get Back To Work - Settings</title>
+		<link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png" />
+		<link rel="icon" type="image/png" sizes="48x48" href="images/logo-48.png" />
+		<link rel="stylesheet" href="options.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>Get Back To Work Settings</h1>
+
+			<section class="card">
+				<h2>Schedule</h2>
+				<div class="form-group">
+					<label>Active Days:</label>
+					<div class="days-selector">
+						<label><input type="checkbox" value="1" class="day-check" /> Mon</label>
+						<label><input type="checkbox" value="2" class="day-check" /> Tue</label>
+						<label><input type="checkbox" value="3" class="day-check" /> Wed</label>
+						<label><input type="checkbox" value="4" class="day-check" /> Thu</label>
+						<label><input type="checkbox" value="5" class="day-check" /> Fri</label>
+						<label><input type="checkbox" value="6" class="day-check" /> Sat</label>
+						<label><input type="checkbox" value="0" class="day-check" /> Sun</label>
+					</div>
+				</div>
+				<div class="form-group time-range">
+					<label>
+						Start Time:
+						<input type="time" id="startTime" />
+					</label>
+					<label>
+						End Time:
+						<input type="time" id="endTime" />
+					</label>
+				</div>
+			</section>
+
+			<section class="card">
+				<h2>Blocked Websites</h2>
+				<div class="add-site-form">
+					<input type="text" id="newSiteInput" placeholder="e.g. facebook.com" list="commonSites" />
+					<datalist id="commonSites">
+						<option value="facebook.com"></option>
+						<option value="twitter.com"></option>
+						<option value="instagram.com"></option>
+						<option value="youtube.com"></option>
+						<option value="reddit.com"></option>
+						<option value="linkedin.com"></option>
+						<option value="tiktok.com"></option>
+						<option value="netflix.com"></option>
+					</datalist>
+
+					<button id="addSiteBtn">Block Site</button>
+				</div>
+				<div id="sitesList" class="sites-list">
+					<!-- Sites will be added here dynamically -->
+				</div>
+			</section>
+
+			<section class="card">
+				<h2>Settings</h2>
+				<div class="form-group">
+					<label class="toggle-label">
+						<input type="checkbox" id="flashToggle" />
+						Enable Flashing "GET BACK TO WORK" Screen
+					</label>
+				</div>
+			</section>
+
+			<div id="status" class="status-message"></div>
+		</div>
+		<script type="module" src="options.js"></script>
+	</body>
+</html>

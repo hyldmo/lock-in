@@ -14,7 +14,3 @@ else
     echo "No new version. Canceling deploy."
 fi
 cat .version | awk '{print "PACKAGE_VERSION="$1}' >> .env
-
-
-
-

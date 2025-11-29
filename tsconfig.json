@@ -1,13 +1,13 @@
 {
 	"compilerOptions": {
+		"outDir": "dist",
 		"sourceMap": true,
-		"noEmit": true,
 
 		"strict": true,
 		"verbatimModuleSyntax": true,
 		"downlevelIteration": true,
 
-		"allowJs": true,
+		"allowJs": false,
 		"checkJs": false,
 
 		"module": "ES6",

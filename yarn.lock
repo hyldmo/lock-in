@@ -2292,9 +2292,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gettowork@workspace:.":
+"lock-in@workspace:.":
   version: 0.0.0-use.local
-  resolution: "gettowork@workspace:."
+  resolution: "lock-in@workspace:."
   dependencies:
     "@biomejs/biome": "npm:^2.3.8"
     "@commitlint/cli": "npm:^20.1.0"
@@ -2305,6 +2305,7 @@ __metadata:
     rollup: "npm:^4.53.3"
     rollup-plugin-copy: "npm:^3.5.0"
     semantic-release: "npm:^25.0.2"
+    tslib: "npm:^2.8.1"
     type-fest: "npm:^5.2.0"
     typescript: "npm:^5.9.3"
   languageName: unknown
@@ -4984,6 +4985,13 @@ __metadata:
   version: 3.0.0
   resolution: "treeverse@npm:3.0.0"
   checksum: 10/a053ad73f800c64c53ecf0effe7ea12e16eae1cf03f0901ac6b61390b6440d05d0aa8c942b6e77d2e9237d247b36fd405284942419f3817c9c3ef43bc5236218
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
   languageName: node
   linkType: hard
 
