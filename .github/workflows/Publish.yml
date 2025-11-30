@@ -23,6 +23,7 @@ jobs:
 
       - run: yarn --immutable
       - run: yarn lint
+      - run: yarn lint:tsc
 
       - name: Get version number
         id: semver
