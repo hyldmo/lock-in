@@ -17,5 +17,5 @@
 		"skipLibCheck": true
 	},
 	"files": ["src/types/globals.d.ts"],
-	"include": ["src/**/*", "*.ts"]
+	"include": ["src/**/*", "*.ts", "release.config.js"]
 }
