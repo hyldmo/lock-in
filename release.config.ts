@@ -1,5 +1,5 @@
-/** @type {import('semantic-release').GlobalConfig} */
-module.exports = {
+import type { GlobalConfig } from 'semantic-release'
+export default {
 	plugins: [
 		[
 			'@semantic-release/commit-analyzer',
@@ -32,4 +32,4 @@ module.exports = {
 			}
 		]
 	]
-}
+} satisfies Partial<GlobalConfig>
