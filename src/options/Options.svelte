@@ -7,12 +7,20 @@ let newSiteInput = ''
 let statusMessage = ''
 let statusTimeout: number
 
-// Helper for exception inputs
-let exceptionInputs: Record<string, string> = {}
+// Helper for allowed path inputs
+let allowedPathInputs: Record<string, string> = {}
+// Helper for blocked path inputs
+let blockedPathInputs: Record<string, string> = {}
 
 onMount(() => {
 	chrome.storage.sync.get('settings', result => {
 		settings = (result.settings as Settings) || DEFAULT_SETTINGS
+		// Initialize blockedPaths for existing sites that don't have it
+		settings.blockedSites = settings.blockedSites.map(site => ({
+			...site,
+			allowedPaths: site.allowedPaths || [],
+			blockedPaths: site.blockedPaths || []
+		}))
 	})
 })
 
@@ -57,7 +65,8 @@ function addSite() {
 		...settings.blockedSites,
 		{
 			domain: cleanDomain,
-			pathExceptions: [],
+			allowedPaths: [],
+			blockedPaths: [],
 			allowAllSubpaths: false
 		}
 	]
@@ -70,21 +79,40 @@ function removeSite(domain: string) {
 	saveOptions()
 }
 
-function addException(site: SiteBlock) {
-	const path = exceptionInputs[site.domain]?.trim()
+function addAllowedPath(site: SiteBlock) {
+	const path = allowedPathInputs[site.domain]?.trim()
 	if (!path) return
 
 	const cleanPath = path.startsWith('/') ? path : `/${path}`
-	if (!site.pathExceptions.includes(cleanPath)) {
-		site.pathExceptions = [...site.pathExceptions, cleanPath]
+	if (!site.allowedPaths.includes(cleanPath)) {
+		site.allowedPaths = [...site.allowedPaths, cleanPath]
 		settings.blockedSites = settings.blockedSites // Trigger reactivity
-		exceptionInputs[site.domain] = ''
+		allowedPathInputs[site.domain] = ''
 		saveOptions()
 	}
 }
 
-function removeException(site: SiteBlock, path: string) {
-	site.pathExceptions = site.pathExceptions.filter(p => p !== path)
+function removeAllowedPath(site: SiteBlock, path: string) {
+	site.allowedPaths = site.allowedPaths.filter(p => p !== path)
+	settings.blockedSites = settings.blockedSites // Trigger reactivity
+	saveOptions()
+}
+
+function addBlockedPath(site: SiteBlock) {
+	const path = blockedPathInputs[site.domain]?.trim()
+	if (!path) return
+
+	const cleanPath = path.startsWith('/') ? path : `/${path}`
+	if (!site.blockedPaths.includes(cleanPath)) {
+		site.blockedPaths = [...site.blockedPaths, cleanPath]
+		settings.blockedSites = settings.blockedSites // Trigger reactivity
+		blockedPathInputs[site.domain] = ''
+		saveOptions()
+	}
+}
+
+function removeBlockedPath(site: SiteBlock, path: string) {
+	site.blockedPaths = site.blockedPaths.filter(p => p !== path)
 	settings.blockedSites = settings.blockedSites // Trigger reactivity
 	saveOptions()
 }
@@ -119,14 +147,18 @@ function removeException(site: SiteBlock, path: string) {
 				{/each}
 			</div>
 		</div>
-		<div class="flex gap-5">
+		<div class="flex gap-5 items-end">
 			<label class="flex flex-col">
 				<span class="font-medium mb-1">Start Time:</span>
-				<input type="time" class="border border-gray-300 rounded px-2 py-1" bind:value={settings.schedule.startTime} on:change={saveOptions} />
+				<input type="time" class="border border-gray-300 rounded px-2 py-1 disabled:bg-gray-200 disabled:cursor-not-allowed" bind:value={settings.schedule.startTime} on:change={saveOptions} disabled={settings.schedule.allDay} />
 			</label>
 			<label class="flex flex-col">
 				<span class="font-medium mb-1">End Time:</span>
-				<input type="time" class="border border-gray-300 rounded px-2 py-1" bind:value={settings.schedule.endTime} on:change={saveOptions} />
+				<input type="time" class="border border-gray-300 rounded px-2 py-1 disabled:bg-gray-200 disabled:cursor-not-allowed" bind:value={settings.schedule.endTime} on:change={saveOptions} disabled={settings.schedule.allDay} />
+			</label>
+			<label class="flex items-center gap-2 cursor-pointer select-none mb-1">
+				<input type="checkbox" class="accent-blue-500" bind:checked={settings.schedule.allDay} on:change={saveOptions} />
+				All Day
 			</label>
 		</div>
 	</section>
@@ -144,7 +176,7 @@ function removeException(site: SiteBlock, path: string) {
 			/>
 			<datalist id="commonSites">
 				<option value="facebook.com"></option>
-				<option value="twitter.com"></option>
+				<option value="x.com"></option>
 				<option value="instagram.com"></option>
 				<option value="youtube.com"></option>
 				<option value="reddit.com"></option>
@@ -174,32 +206,61 @@ function removeException(site: SiteBlock, path: string) {
 						</div>
 					</div>
 
-					<div class="ml-5 text-sm">
-						{#if site.pathExceptions.length > 0}
-							<div class="text-xs mb-1.5 font-medium text-gray-500">Allowed Subpaths:</div>
-						{/if}
+					{#if !site.allowAllSubpaths}
+						<div class="ml-5 text-sm">
+							{#if site.allowedPaths.length > 0}
+								<div class="text-xs mb-1.5 font-medium text-gray-500">Allowed Paths:</div>
+							{/if}
 
-						{#each site.pathExceptions as path}
-							<div class="flex justify-between items-center mb-1 text-gray-600">
-								<span>{path}</span>
-								<button
-									class="bg-red-500 hover:bg-red-600 text-white px-1.5 py-0.5 text-xs rounded transition-colors"
-									on:click={() => removeException(site, path)}>x</button
-								>
-							</div>
-						{/each}
-					</div>
+							{#each site.allowedPaths as path}
+								<div class="flex justify-between items-center mb-1 text-gray-600">
+									<span>{path}</span>
+									<button
+										class="bg-red-500 hover:bg-red-600 text-white px-1.5 py-0.5 text-xs rounded transition-colors"
+										on:click={() => removeAllowedPath(site, path)}>x</button
+									>
+								</div>
+							{/each}
+						</div>
 
-					<div class="mt-2 flex gap-1.5">
-						<input
-							type="text"
-							class="flex-grow p-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-							placeholder="/path/to/allow"
-							bind:value={exceptionInputs[site.domain]}
-							on:keypress={(e) => e.key === 'Enter' && addException(site)}
-						/>
-						<button class="text-sm px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded transition-colors" on:click={() => addException(site)}>Allow Path</button>
-					</div>
+						<div class="mt-2 flex gap-1.5">
+							<input
+								type="text"
+								class="grow p-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+								placeholder="path/to/allow or /regex/pattern/"
+								bind:value={allowedPathInputs[site.domain]}
+								on:keypress={(e) => e.key === 'Enter' && addAllowedPath(site)}
+							/>
+							<button class="text-sm px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded transition-colors" on:click={() => addAllowedPath(site)}>Allow Path</button>
+						</div>
+					{:else}
+						<div class="ml-5 text-sm">
+							{#if site.blockedPaths.length > 0}
+								<div class="text-xs mb-1.5 font-medium text-gray-500">Blocked Paths:</div>
+							{/if}
+
+							{#each site.blockedPaths as path}
+								<div class="flex justify-between items-center mb-1 text-gray-600">
+									<span>{path}</span>
+									<button
+										class="bg-red-500 hover:bg-red-600 text-white px-1.5 py-0.5 text-xs rounded transition-colors"
+										on:click={() => removeBlockedPath(site, path)}>x</button
+									>
+								</div>
+							{/each}
+						</div>
+
+						<div class="mt-2 flex gap-1.5">
+							<input
+								type="text"
+								class="grow p-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+								placeholder="path/to/block or /regex/pattern/"
+								bind:value={blockedPathInputs[site.domain]}
+								on:keypress={(e) => e.key === 'Enter' && addBlockedPath(site)}
+							/>
+							<button class="text-sm px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded transition-colors" on:click={() => addBlockedPath(site)}>Block Path</button>
+						</div>
+					{/if}
 				</div>
 			{/each}
 		</div>

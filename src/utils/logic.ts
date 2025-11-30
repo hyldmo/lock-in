@@ -19,6 +19,28 @@ export function isWithinSchedule(schedule: Schedule): boolean {
 	return currentTime >= schedule.startTime && currentTime <= schedule.endTime
 }
 
+function matchesPath(pathname: string, pattern: string): boolean {
+	const normalizedPath = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+
+	// Check if pattern is a regex (starts and ends with /)
+	const isRegex = pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2
+	if (isRegex) {
+		try {
+			const regexPattern = pattern.slice(1, -1) // Remove leading and trailing /
+			const regex = new RegExp(regexPattern)
+			return regex.test(normalizedPath)
+		} catch {
+			// Invalid regex, fall back to string matching
+			return false
+		}
+	}
+
+	// String matching: exact match or prefix match
+	const normalizedPattern = pattern.endsWith('/') ? pattern.slice(0, -1) : pattern
+	const cleanPattern = normalizedPattern.startsWith('/') ? normalizedPattern : '/' + normalizedPattern
+	return normalizedPath === cleanPattern || normalizedPath.startsWith(cleanPattern + '/')
+}
+
 export function shouldBlock(url: string, settings: Settings): boolean {
 	if (!isWithinSchedule(settings.schedule)) {
 		return false
@@ -40,17 +62,19 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			return false
 		}
 
-		// If allowAllSubpaths is enabled, allow all paths
+		// If allowAllSubpaths is enabled, check blocked paths
 		if (matchedBlock.allowAllSubpaths) {
-			return false
+			// If any blocked path matches the current path, block it
+			const isBlocked = matchedBlock.blockedPaths?.some(blockedPath => {
+				return matchesPath(pathname, blockedPath)
+			})
+			return isBlocked || false
 		}
 
-		// Check exceptions
-		// If any exception path is a prefix of the current path, allow it
-		const isAllowed = matchedBlock.pathExceptions.some(exception => {
-			// clean exception path
-			const cleanEx = exception.startsWith('/') ? exception : '/' + exception
-			return pathname.startsWith(cleanEx)
+		// Check allowed paths
+		// If any allowed path matches the current path, allow it
+		const isAllowed = matchedBlock.allowedPaths.some(allowedPath => {
+			return matchesPath(pathname, allowedPath)
 		})
 
 		return !isAllowed

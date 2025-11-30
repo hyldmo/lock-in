@@ -28,7 +28,8 @@ export default defineManifest({
 	content_scripts: [
 		{
 			js: ['src/main.ts'],
-			matches: ['<all_urls>']
+			matches: ['<all_urls>'],
+			run_at: 'document_start'
 		}
 	],
 	permissions: ['activeTab', 'scripting', 'storage'],
