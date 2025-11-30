@@ -20,7 +20,6 @@ jobs:
           cache-dependency-path: "yarn.lock"
 
       - run: yarn --immutable
-      - run: yarn format:check
       - run: yarn lint
 
       - name: Get version number
@@ -34,16 +33,12 @@ jobs:
         env:
           PACKAGE_VERSION: ${{ steps.semver.outputs.VERSION }}
 
-      - run: zip -r release-${{ steps.semver.outputs.VERSION }}.zip *
-        if: ${{ steps.semver.outputs.VERSION != '' }}
-        working-directory: dist
-
       - name: Upload to Chrome Web Store
         uses: mnao305/chrome-extension-upload@v4.0.0
         if: ${{ steps.semver.outputs.VERSION != '' }}
         with:
-          file-path: dist/release-${{ steps.semver.outputs.VERSION }}.zip
-          extension-id: YOUR_EXTENSION_ID
+          file-path: dist/crx-${{ github.event.repository.name }}-${{ steps.semver.outputs.VERSION }}.zip
+          extension-id: ${{ vars.EXTENSION_ID }}
           client-id: ${{ secrets.CLIENT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
           refresh-token: ${{ secrets.REFRESH_TOKEN }}

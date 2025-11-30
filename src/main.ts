@@ -58,22 +58,26 @@ window.addEventListener('popstate', checkAndBlock)
 window.addEventListener('hashchange', checkAndBlock)
 
 // Intercept link clicks
-document.addEventListener('click', (e) => {
-	const target = e.target as HTMLElement
-	const link = target.closest('a')
-	if (link && link.href) {
-		try {
-			const url = new URL(link.href)
-			// Only intercept same-origin navigation
-			if (url.origin === window.location.origin) {
-				// Small delay to let navigation happen, then check
-				setTimeout(checkAndBlock, 100)
+document.addEventListener(
+	'click',
+	e => {
+		const target = e.target as HTMLElement
+		const link = target.closest('a')
+		if (link && link.href) {
+			try {
+				const url = new URL(link.href)
+				// Only intercept same-origin navigation
+				if (url.origin === window.location.origin) {
+					// Small delay to let navigation happen, then check
+					setTimeout(checkAndBlock, 100)
+				}
+			} catch {
+				// Invalid URL, ignore
 			}
-		} catch {
-			// Invalid URL, ignore
 		}
-	}
-}, true)
+	},
+	true
+)
 
 // Main execution - check settings and block if needed
 chrome.storage.sync.get('settings', result => {
@@ -84,7 +88,7 @@ chrome.storage.sync.get('settings', result => {
 })
 
 // Listen for settings changes
-chrome.storage.onChanged.addListener((changes) => {
+chrome.storage.onChanged.addListener(changes => {
 	if (changes.settings) {
 		currentSettings = (changes.settings.newValue as Settings) || DEFAULT_SETTINGS
 		checkAndBlock()
