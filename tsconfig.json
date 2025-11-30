@@ -7,8 +7,8 @@
 		"verbatimModuleSyntax": true,
 		"downlevelIteration": true,
 
-		"allowJs": false,
-		"checkJs": false,
+		"allowJs": true,
+		"checkJs": true,
 
 		"module": "ES6",
 		"moduleResolution": "Bundler",
