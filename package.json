@@ -11,7 +11,7 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write . --unsafe",
 		"format": "biome format --write .",
-		"release": "semantic-release --config ./release.config.ts"
+		"release": "semantic-release"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.8",
