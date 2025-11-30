@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount } from 'svelte'
+import { fly } from 'svelte/transition'
 import { DEFAULT_SETTINGS, type Settings, type SiteBlock } from '../types/index'
 
 let settings: Settings = { ...DEFAULT_SETTINGS }
@@ -144,163 +145,265 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 }
 </script>
 
-<div class="container mx-auto max-w-[600px] p-5">
-	<h1 class="text-center text-[#1d1d1f] text-2xl mb-5 font-semibold">Lock In Settings</h1>
+<div class="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+	<header class="mb-8 text-center">
+		<h1 class="text-3xl font-bold text-slate-900 tracking-tight">Lock In</h1>
+		<p class="mt-2 text-slate-600">Manage your blocked sites and schedule.</p>
+	</header>
 
-	<section class="bg-white rounded-lg p-5 mb-5 shadow-sm">
-		<h2 class="mt-0 text-xl border-b border-gray-200 pb-2.5 mb-4">Schedule</h2>
-		<div class="mb-4">
-			<span class="block font-medium mb-1">Active Days:</span>
-			<div class="flex gap-2.5 flex-wrap mt-1.5">
-				{#each [
-					{ val: 1, label: 'Mon' },
-					{ val: 2, label: 'Tue' },
-					{ val: 3, label: 'Wed' },
-					{ val: 4, label: 'Thu' },
-					{ val: 5, label: 'Fri' },
-					{ val: 6, label: 'Sat' },
-					{ val: 0, label: 'Sun' }
-				] as day}
-					<label class="cursor-pointer select-none flex items-center gap-1">
+	<!-- Schedule Section -->
+	<section class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+		<div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+			<h2 class="text-lg font-semibold text-slate-800">Schedule</h2>
+		</div>
+
+		<div class="p-6 space-y-6">
+			<div>
+				<span class="block text-sm font-medium text-slate-700 mb-3">Active Days</span>
+				<div class="flex flex-wrap gap-2">
+					{#each [
+						{ val: 1, label: 'Mon' },
+						{ val: 2, label: 'Tue' },
+						{ val: 3, label: 'Wed' },
+						{ val: 4, label: 'Thu' },
+						{ val: 5, label: 'Fri' },
+						{ val: 6, label: 'Sat' },
+						{ val: 0, label: 'Sun' }
+					] as day}
+						<label class="cursor-pointer relative">
+							<input
+								type="checkbox"
+								class="peer sr-only"
+								checked={settings.schedule.days.includes(day.val)}
+								on:change={() => toggleDay(day.val)}
+							/>
+							<div class="px-3 py-1.5 rounded-full text-sm font-medium transition-all
+								bg-slate-50 text-slate-600 border border-slate-200
+								hover:border-blue-400
+								peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
+								peer-focus:ring-2 peer-focus:ring-blue-200">
+								{day.label}
+							</div>
+						</label>
+					{/each}
+				</div>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+				<div class="space-y-1">
+					<span class="block text-sm font-medium text-slate-700">Time Range</span>
+					<div class="flex items-center gap-2">
+						<input
+							type="time"
+							class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed p-2 border"
+							bind:value={settings.schedule.startTime}
+							on:change={saveOptions}
+							disabled={settings.schedule.allDay}
+						/>
+						<span class="text-slate-400">to</span>
+						<input
+							type="time"
+							class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed p-2 border"
+							bind:value={settings.schedule.endTime}
+							on:change={saveOptions}
+							disabled={settings.schedule.allDay}
+						/>
+					</div>
+				</div>
+
+				<div class="flex items-center h-full pt-6">
+					<label class="inline-flex items-center cursor-pointer group">
 						<input
 							type="checkbox"
-							class="accent-blue-500"
-							checked={settings.schedule.days.includes(day.val)}
-							on:change={() => toggleDay(day.val)}
+							class="sr-only peer"
+							bind:checked={settings.schedule.allDay}
+							on:change={saveOptions}
 						/>
-						{day.label}
+						<div class="relative w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+						<span class="ms-3 text-sm font-medium text-slate-700 group-hover:text-slate-900">All Day</span>
 					</label>
-				{/each}
+				</div>
 			</div>
-		</div>
-		<div class="flex gap-5 items-end">
-			<label class="flex flex-col">
-				<span class="font-medium mb-1">Start Time:</span>
-				<input type="time" class="border border-gray-300 rounded px-2 py-1 disabled:bg-gray-200 disabled:cursor-not-allowed" bind:value={settings.schedule.startTime} on:change={saveOptions} disabled={settings.schedule.allDay} />
-			</label>
-			<label class="flex flex-col">
-				<span class="font-medium mb-1">End Time:</span>
-				<input type="time" class="border border-gray-300 rounded px-2 py-1 disabled:bg-gray-200 disabled:cursor-not-allowed" bind:value={settings.schedule.endTime} on:change={saveOptions} disabled={settings.schedule.allDay} />
-			</label>
-			<label class="flex items-center gap-2 cursor-pointer select-none mb-1">
-				<input type="checkbox" class="accent-blue-500" bind:checked={settings.schedule.allDay} on:change={saveOptions} />
-				All Day
-			</label>
 		</div>
 	</section>
 
-	<section class="bg-white rounded-lg p-5 mb-5 shadow-sm">
-		<h2 class="mt-0 text-xl border-b border-gray-200 pb-2.5 mb-4">Blocked Websites</h2>
-		<div class="flex gap-2.5 mb-4">
-			<input
-				type="text"
-				class="grow p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-				placeholder="e.g. facebook.com"
-				list="commonSites"
-				bind:value={newSiteInput}
-				on:keypress={(e) => e.key === 'Enter' && addSite()}
-			/>
-			<datalist id="commonSites">
-				<option value="facebook.com"></option>
-				<option value="x.com"></option>
-				<option value="instagram.com"></option>
-				<option value="youtube.com"></option>
-				<option value="reddit.com"></option>
-				<option value="linkedin.com"></option>
-				<option value="tiktok.com"></option>
-				<option value="netflix.com"></option>
-			</datalist>
-
-			<button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors" on:click={addSite}>Block Site</button>
+	<!-- Blocked Websites Section -->
+	<section class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+		<div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+			<h2 class="text-lg font-semibold text-slate-800">Blocked Websites</h2>
 		</div>
-		<div class="flex flex-col gap-2.5">
+
+		<div class="p-6 border-b border-slate-100 bg-slate-50/30">
+			<div class="flex gap-3">
+				<div class="relative grow">
+					<input
+						type="text"
+						class="block w-full pl-4 pr-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm outline-none transition-shadow"
+						placeholder="example.com"
+						list="commonSites"
+						bind:value={newSiteInput}
+						on:keypress={(e) => e.key === 'Enter' && addSite()}
+					/>
+					<datalist id="commonSites">
+						<option value="facebook.com"></option>
+						<option value="x.com"></option>
+						<option value="instagram.com"></option>
+						<option value="youtube.com"></option>
+						<option value="reddit.com"></option>
+						<option value="linkedin.com"></option>
+						<option value="tiktok.com"></option>
+						<option value="netflix.com"></option>
+					</datalist>
+				</div>
+				<button
+					class="px-5 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 transition-colors shadow-sm cursor-pointer"
+					on:click={addSite}
+				>
+					Block Site
+				</button>
+			</div>
+		</div>
+
+		<div class="divide-y divide-slate-100">
 			{#each settings.blockedSites as site (site.domain)}
-				<div class="border border-gray-200 rounded p-2.5 bg-gray-50">
-					<div class="flex justify-between items-center mb-2">
-						<span class="font-bold">{site.domain}</span>
-						<div class="flex items-center gap-2.5">
-							<label class="text-sm cursor-pointer select-none flex items-center gap-1">
+				<div class="p-6 hover:bg-slate-50 transition-colors group">
+					<div class="flex justify-between items-start mb-4">
+						<div>
+							<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
+							<label class="mt-1 inline-flex items-center gap-2 cursor-pointer select-none text-xs text-slate-500 hover:text-slate-700 transition-colors">
 								<input
 									type="checkbox"
-									class="accent-blue-500"
+									class="rounded border-slate-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
 									bind:checked={site.allowAllSubpaths}
 									on:change={saveOptions}
 								/>
 								Allow all subpaths
 							</label>
-							<button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 text-sm rounded transition-colors" on:click={() => removeSite(site.domain)}>Remove</button>
 						</div>
+						<button
+							class="text-slate-400 hover:text-red-600 p-1 rounded hover:bg-red-50 transition-all cursor-pointer"
+							on:click={() => removeSite(site.domain)}
+							title="Remove site"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+							</svg>
+						</button>
 					</div>
 
 					{#if !site.allowAllSubpaths}
-						<div class="ml-5 text-sm">
+						<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
+							<!-- Allowed Paths List -->
 							{#if site.allowedPaths.length > 0}
-								<div class="text-xs mb-1.5 font-medium text-gray-500">Allowed Paths:</div>
+								<div class="space-y-2">
+									<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Exceptions (Allowed)</div>
+									<div class="flex flex-wrap gap-2">
+										{#each site.allowedPaths as path}
+											<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 border border-green-100 text-xs font-medium">
+												<span>{path}</span>
+												<button
+													class="hover:text-green-900 hover:bg-green-200 rounded-full p-0.5 transition-colors cursor-pointer"
+													on:click={() => removeAllowedPath(site, path)}
+												>×</button>
+											</div>
+										{/each}
+									</div>
+								</div>
 							{/if}
 
-							{#each site.allowedPaths as path}
-								<div class="flex justify-between items-center mb-1 text-gray-600">
-									<span>{path}</span>
-									<button
-										class="bg-red-500 hover:bg-red-600 text-white px-1.5 py-0.5 text-xs rounded transition-colors"
-										on:click={() => removeAllowedPath(site, path)}>x</button
-									>
-								</div>
-							{/each}
-						</div>
-
-						<div class="mt-2 flex gap-1.5">
-							<input
-								type="text"
-								class="grow p-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-								placeholder="path/to/allow or /regex/pattern/"
-								bind:value={allowedPathInputs[site.domain]}
-								on:keypress={(e) => e.key === 'Enter' && addAllowedPath(site)}
-							/>
-							<button class="text-sm px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded transition-colors" on:click={() => addAllowedPath(site)}>Allow Path</button>
+							<!-- Add Allowed Path -->
+							<div class="flex gap-2 items-center">
+								<input
+									type="text"
+									class="grow px-3 py-1.5 text-sm border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+									placeholder="/allow/this/path"
+									bind:value={allowedPathInputs[site.domain]}
+									on:keypress={(e) => e.key === 'Enter' && addAllowedPath(site)}
+								/>
+								<button
+									class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-md hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-slate-500 transition-colors cursor-pointer"
+									on:click={() => addAllowedPath(site)}
+								>
+									Add Exception
+								</button>
+							</div>
 						</div>
 					{:else}
-						<div class="ml-5 text-sm">
+						<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
+							<!-- Blocked Paths List -->
 							{#if site.blockedPaths.length > 0}
-								<div class="text-xs mb-1.5 font-medium text-gray-500">Blocked Paths:</div>
+								<div class="space-y-2">
+									<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Specific Blocks</div>
+									<div class="flex flex-wrap gap-2">
+										{#each site.blockedPaths as path}
+											<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-50 text-red-700 border border-red-100 text-xs font-medium">
+												<span>{path}</span>
+												<button
+													class="hover:text-red-900 hover:bg-red-200 rounded-full p-0.5 transition-colors cursor-pointer"
+													on:click={() => removeBlockedPath(site, path)}
+												>×</button>
+											</div>
+										{/each}
+									</div>
+								</div>
 							{/if}
 
-							{#each site.blockedPaths as path}
-								<div class="flex justify-between items-center mb-1 text-gray-600">
-									<span>{path}</span>
-									<button
-										class="bg-red-500 hover:bg-red-600 text-white px-1.5 py-0.5 text-xs rounded transition-colors"
-										on:click={() => removeBlockedPath(site, path)}>x</button
-									>
-								</div>
-							{/each}
-						</div>
-
-						<div class="mt-2 flex gap-1.5">
-							<input
-								type="text"
-								class="grow p-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-								placeholder="path/to/block or /regex/pattern/"
-								bind:value={blockedPathInputs[site.domain]}
-								on:keypress={(e) => e.key === 'Enter' && addBlockedPath(site)}
-							/>
-							<button class="text-sm px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded transition-colors" on:click={() => addBlockedPath(site)}>Block Path</button>
+							<!-- Add Blocked Path -->
+							<div class="flex gap-2 items-center">
+								<input
+									type="text"
+									class="grow px-3 py-1.5 text-sm border border-slate-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+									placeholder="/block/only/this"
+									bind:value={blockedPathInputs[site.domain]}
+									on:keypress={(e) => e.key === 'Enter' && addBlockedPath(site)}
+								/>
+								<button
+									class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-medium rounded-md hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-slate-500 transition-colors cursor-pointer"
+									on:click={() => addBlockedPath(site)}
+								>
+									Add Block
+								</button>
+							</div>
 						</div>
 					{/if}
 				</div>
 			{/each}
+			{#if settings.blockedSites.length === 0}
+				<div class="p-8 text-center text-slate-500 text-sm">
+					No sites blocked yet. Add one above to get started.
+				</div>
+			{/if}
 		</div>
 	</section>
 
-	<section class="bg-white rounded-lg p-5 mb-5 shadow-sm">
-		<h2 class="mt-0 text-xl border-b border-gray-200 pb-2.5 mb-4">Settings</h2>
-		<div class="mb-4">
-			<label class="flex items-center gap-2 cursor-pointer select-none">
-				<input type="checkbox" class="accent-blue-500" bind:checked={settings.flashEnabled} on:change={saveOptions} />
-				Enable Flashing "Lock In" Screen
+	<!-- Settings Section -->
+	<section class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+		<div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+			<h2 class="text-lg font-semibold text-slate-800">General Settings</h2>
+		</div>
+		<div class="p-6">
+			<label class="flex items-center gap-3 cursor-pointer group">
+				<input
+					type="checkbox"
+					class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 transition duration-150 ease-in-out"
+					bind:checked={settings.flashEnabled}
+					on:change={saveOptions}
+				/>
+				<span class="text-slate-700 font-medium group-hover:text-slate-900 transition-colors">Enable Flashing "Lock In" Screen</span>
 			</label>
+			<p class="mt-2 ml-8 text-sm text-slate-500">
+				Shows a visual effect when a blocked site is accessed during focus hours.
+			</p>
 		</div>
 	</section>
 
-	<div class="text-center text-green-600 h-5">{statusMessage}</div>
+	<!-- Toast Notification -->
+	{#if statusMessage}
+		<div transition:fly={{ y: 20, duration: 300 }} class="fixed bottom-6 right-6 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+			</svg>
+			{statusMessage}
+		</div>
+	{/if}
 </div>

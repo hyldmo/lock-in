@@ -37,7 +37,7 @@ jobs:
         uses: mnao305/chrome-extension-upload@v4.0.0
         if: ${{ steps.semver.outputs.VERSION != '' }}
         with:
-          file-path: dist/crx-${{ github.event.repository.name }}-${{ steps.semver.outputs.VERSION }}.zip
+          file-path: release/crx-${{ github.event.repository.name }}-${{ steps.semver.outputs.VERSION }}.zip
           extension-id: ${{ vars.EXTENSION_ID }}
           client-id: ${{ secrets.CLIENT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
