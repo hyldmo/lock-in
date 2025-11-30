@@ -6,6 +6,7 @@ import { defineConfig } from 'vite'
 import zip from 'vite-plugin-zip-pack'
 import { createManifest } from './manifest.config'
 import pkg from './package.json'
+import { crxPack } from './vite-plugin-crx-pack'
 
 export default defineConfig(({ mode }) => {
 	const version = process.env.PACKAGE_VERSION || pkg.version.replace('-development', '')
@@ -24,7 +25,12 @@ export default defineConfig(({ mode }) => {
 				}
 			}),
 			crx({ manifest }),
-			zip({ outDir: 'release', outFileName: `crx-${pkg.name}-${version}.zip` })
+			zip({ outDir: 'release', outFileName: `crx-${pkg.name}-${version}.zip` }),
+			crxPack({
+				outDir: 'release',
+				outFileName: `${pkg.name}-${version}.crx`,
+				pem: process.env.CRX_PRIVATE_KEY
+			})
 		],
 		server: {
 			cors: {

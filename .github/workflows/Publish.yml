@@ -34,6 +34,7 @@ jobs:
         if: steps.semver.outputs.VERSION != ''
         env:
           PACKAGE_VERSION: ${{ steps.semver.outputs.VERSION }}
+          CRX_PRIVATE_KEY: ${{ secrets.CRX_PRIVATE_KEY }}
 
       # - name: Upload to Chrome Web Store
       #   uses: mnao305/chrome-extension-upload@v4.0.0
@@ -48,6 +49,6 @@ jobs:
       - run: yarn release
         if: steps.semver.outputs.VERSION != ''
         env:
-          RELEASE_PATH: release/crx-${{ github.event.repository.name }}-${{ steps.semver.outputs.VERSION }}.zip
+          RELEASE_PATH: release/crx-${{ github.event.repository.name }}-${{ steps.semver.outputs.VERSION }}
           VERSION: ${{ steps.semver.outputs.VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

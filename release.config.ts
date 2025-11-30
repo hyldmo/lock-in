@@ -8,8 +8,12 @@ export default {
 			{
 				assets: [
 					{
-						path: process.env.RELEASE_PATH || 'dry-run.zip',
+						path: `${process.env.RELEASE_PATH}.zip`,
 						label: `Chrome Web Extension v${process.env.VERSION}`
+					},
+					{
+						path: `${process.env.RELEASE_PATH}.crx`,
+						label: `Chrome Web Extension .crx v${process.env.VERSION}`
 					}
 				]
 			}
