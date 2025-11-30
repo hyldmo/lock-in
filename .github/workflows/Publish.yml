@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -29,13 +29,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: yarn prod
-        if: ${{ steps.semver.outputs.VERSION != '' }}
+        if: steps.semver.outputs.VERSION != ''
         env:
           PACKAGE_VERSION: ${{ steps.semver.outputs.VERSION }}
 
       - name: Upload to Chrome Web Store
         uses: mnao305/chrome-extension-upload@v4.0.0
-        if: ${{ steps.semver.outputs.VERSION != '' }}
+        if: steps.semver.outputs.VERSION != ''
         with:
           file-path: release/crx-${{ github.event.repository.name }}-${{ steps.semver.outputs.VERSION }}.zip
           extension-id: ${{ vars.EXTENSION_ID }}
@@ -44,7 +44,7 @@ jobs:
           refresh-token: ${{ secrets.REFRESH_TOKEN }}
 
       - run: yarn release
-        if: ${{ steps.semver.outputs.VERSION != '' }}
+        if: always() && steps.semver.outputs.VERSION != ''
         env:
           VERSION: ${{ steps.semver.outputs.VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
