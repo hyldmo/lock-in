@@ -1,6 +1,7 @@
 export interface SiteBlock {
 	domain: string
 	pathExceptions: string[]
+	allowAllSubpaths?: boolean
 }
 
 export interface Schedule {

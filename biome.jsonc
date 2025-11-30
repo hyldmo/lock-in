@@ -47,6 +47,11 @@
 			"enabled": true
 		}
 	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
 	"overrides": [
 		{
 			"includes": ["**/package.json", "**/*.yml", "**/*.yaml"],

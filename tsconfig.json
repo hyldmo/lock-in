@@ -11,8 +11,10 @@
 		"checkJs": false,
 
 		"module": "ES6",
-		"moduleResolution": "Node",
+		"moduleResolution": "Bundler",
 		"target": "ESNext",
-		"esModuleInterop": true
-	}
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*"]
 }

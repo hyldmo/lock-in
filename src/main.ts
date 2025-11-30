@@ -1,8 +1,6 @@
 import { DEFAULT_SETTINGS, type Settings } from './types/index'
 import { shouldBlock } from './utils/logic'
 
-console.log('Get Back To Work: Loaded')
-
 // Main execution
 chrome.storage.sync.get('settings', result => {
 	const settings = (result.settings as Settings) || DEFAULT_SETTINGS
@@ -29,7 +27,7 @@ function enforceBlock(flashEnabled: boolean) {
 		width: '100vw',
 		height: '100vh',
 		backgroundColor: 'black',
-		color: 'red',
+		color: 'white',
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -40,15 +38,15 @@ function enforceBlock(flashEnabled: boolean) {
 		textTransform: 'uppercase'
 	})
 
-	overlay.innerText = 'GET BACK\nTO WORK'
+	overlay.innerText = 'YOU NEED TO LOCK IN'
 
 	if (flashEnabled) {
 		const style = document.createElement('style')
 		style.textContent = `
             @keyframes flash {
-                0% { background-color: black; color: red; }
-                50% { background-color: red; color: black; }
-                100% { background-color: black; color: red; }
+                0% { background-color: black; color: white; }
+                50% { background-color: white; color: black; }
+                100% { background-color: black; color: white; }
             }
             .flashing {
                 animation: flash 0.5s infinite;

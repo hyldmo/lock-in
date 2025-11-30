@@ -20,5 +20,8 @@
 		}
 	],
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"prettier.ignorePath": ".gitignore"
+	"prettier.ignorePath": ".gitignore",
+	"[svelte]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
 }

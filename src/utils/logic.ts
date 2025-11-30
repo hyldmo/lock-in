@@ -40,6 +40,11 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			return false
 		}
 
+		// If allowAllSubpaths is enabled, allow all paths
+		if (matchedBlock.allowAllSubpaths) {
+			return false
+		}
+
 		// Check exceptions
 		// If any exception path is a prefix of the current path, allow it
 		const isAllowed = matchedBlock.pathExceptions.some(exception => {

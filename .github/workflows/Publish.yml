@@ -29,12 +29,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update theme version number
-        if: ${{ steps.semver.outputs.VERSION != '' }}
-        run: sed -i 's/0.0.0/${{ steps.semver.outputs.VERSION }}/g' manifest.json
-
       - run: yarn prod
         if: ${{ steps.semver.outputs.VERSION != '' }}
+        env:
+          PACKAGE_VERSION: ${{ steps.semver.outputs.VERSION }}
 
       - run: zip -r release-${{ steps.semver.outputs.VERSION }}.zip *
         if: ${{ steps.semver.outputs.VERSION != '' }}
