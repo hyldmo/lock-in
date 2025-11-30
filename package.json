@@ -24,7 +24,7 @@
 		"@types/chrome": "^0.1.31",
 		"crx": "^5.0.1",
 		"husky": "^9.1.7",
-		"semantic-release": "^25.0.2",
+		"semantic-release": "^19.0.2",
 		"svelte": "^5.45.2",
 		"tailwindcss": "^4.1.17",
 		"type-fest": "^5.2.0",
