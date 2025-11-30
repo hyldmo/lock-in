@@ -78,7 +78,8 @@ function addAllowedPath(site: SiteBlock) {
 	const cleanPath = path.startsWith('/') ? path : `/${path}`
 	if (!site.allowedPaths.includes(cleanPath)) {
 		site.allowedPaths = [...site.allowedPaths, cleanPath]
-		settings.blockedSites = settings.blockedSites // Trigger reactivity
+		// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
+		settings.blockedSites = settings.blockedSites
 		allowedPathInputs[site.domain] = ''
 		onSave()
 	}
@@ -86,7 +87,8 @@ function addAllowedPath(site: SiteBlock) {
 
 function removeAllowedPath(site: SiteBlock, path: string) {
 	site.allowedPaths = site.allowedPaths.filter(p => p !== path)
-	settings.blockedSites = settings.blockedSites // Trigger reactivity
+	// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
+	settings.blockedSites = settings.blockedSites
 	onSave()
 }
 
@@ -97,7 +99,8 @@ function addBlockedPath(site: SiteBlock) {
 	const cleanPath = path.startsWith('/') ? path : `/${path}`
 	if (!site.blockedPaths.includes(cleanPath)) {
 		site.blockedPaths = [...site.blockedPaths, cleanPath]
-		settings.blockedSites = settings.blockedSites // Trigger reactivity
+		// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
+		settings.blockedSites = settings.blockedSites
 		blockedPathInputs[site.domain] = ''
 		onSave()
 	}
@@ -105,7 +108,8 @@ function addBlockedPath(site: SiteBlock) {
 
 function removeBlockedPath(site: SiteBlock, path: string) {
 	site.blockedPaths = site.blockedPaths.filter(p => p !== path)
-	settings.blockedSites = settings.blockedSites // Trigger reactivity
+	// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
+	settings.blockedSites = settings.blockedSites
 	onSave()
 }
 </script>

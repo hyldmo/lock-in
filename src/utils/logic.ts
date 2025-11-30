@@ -3,7 +3,7 @@ import type { Schedule, Settings } from '../types/index'
 export function isWithinSchedule(schedule: Schedule): boolean {
 	const now = new Date()
 	const currentDay = now.getDay()
-	const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0')
+	const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
 
 	// Check day
 	if (!schedule.days.includes(currentDay)) {
@@ -37,8 +37,8 @@ function matchesPath(pathname: string, pattern: string): boolean {
 
 	// String matching: exact match or prefix match
 	const normalizedPattern = pattern.endsWith('/') ? pattern.slice(0, -1) : pattern
-	const cleanPattern = normalizedPattern.startsWith('/') ? normalizedPattern : '/' + normalizedPattern
-	return normalizedPath === cleanPattern || normalizedPath.startsWith(cleanPattern + '/')
+	const cleanPattern = normalizedPattern.startsWith('/') ? normalizedPattern : `/${normalizedPattern}`
+	return normalizedPath === cleanPattern || normalizedPath.startsWith(`${cleanPattern}/`)
 }
 
 export function shouldBlock(url: string, settings: Settings): boolean {
@@ -55,7 +55,7 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 		// We match if the hostname ends with the blocked domain (e.g. sub.facebook.com matches facebook.com)
 		// or is exact match
 		const matchedBlock = settings.blockedSites.find(site => {
-			return hostname === site.domain || hostname.endsWith('.' + site.domain)
+			return hostname === site.domain || hostname.endsWith(`.${site.domain}`)
 		})
 
 		if (!matchedBlock) {

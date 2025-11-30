@@ -15,11 +15,9 @@
 		"bracketSpacing": true,
 		"includes": ["**", "!**/*.cjs", "!**/package.json"]
 	},
-	"assist": { "actions": { "source": { "organizeImports": "off" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": false,
 			"nursery": {
 				"useSortedClasses": {
 					"level": "warn",

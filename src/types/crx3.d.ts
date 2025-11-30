@@ -25,7 +25,7 @@ declare module 'crx3' {
 	interface CRX3Result {
 		appId: string
 		newKey?: string
-		[key: string]: any
+		[key: string]: unknown
 	}
 
 	function crx3(files: string[], options?: CRX3Options): Promise<CRX3Result>

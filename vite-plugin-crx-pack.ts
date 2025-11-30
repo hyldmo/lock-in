@@ -1,6 +1,6 @@
-import crx3 from 'crx3'
 import fs from 'node:fs'
 import path from 'node:path'
+import crx3 from 'crx3'
 import type { Plugin } from 'vite'
 
 interface Options {

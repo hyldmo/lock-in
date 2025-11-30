@@ -41,12 +41,12 @@ function checkAndBlock() {
 const originalPushState = history.pushState
 const originalReplaceState = history.replaceState
 
-history.pushState = function (...args) {
+history.pushState = (...args) => {
 	originalPushState.apply(history, args)
 	checkAndBlock()
 }
 
-history.replaceState = function (...args) {
+history.replaceState = (...args) => {
 	originalReplaceState.apply(history, args)
 	checkAndBlock()
 }
@@ -63,7 +63,7 @@ document.addEventListener(
 	e => {
 		const target = e.target as HTMLElement
 		const link = target.closest('a')
-		if (link && link.href) {
+		if (link?.href) {
 			try {
 				const url = new URL(link.href)
 				// Only intercept same-origin navigation

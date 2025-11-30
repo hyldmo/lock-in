@@ -174,7 +174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/config-conventional@npm:^20.0.0":
+"@commitlint/config-conventional@npm:~20.0.0":
   version: 20.0.0
   resolution: "@commitlint/config-conventional@npm:20.0.0"
   dependencies:
@@ -3939,7 +3939,7 @@ __metadata:
   dependencies:
     "@biomejs/biome": "npm:^2.3.8"
     "@commitlint/cli": "npm:~20.1.0"
-    "@commitlint/config-conventional": "npm:^20.0.0"
+    "@commitlint/config-conventional": "npm:~20.0.0"
     "@crxjs/vite-plugin": "npm:^2.2.1"
     "@sveltejs/vite-plugin-svelte": "npm:^6.2.1"
     "@tailwindcss/vite": "npm:^4.1.17"
