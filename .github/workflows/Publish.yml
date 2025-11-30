@@ -15,9 +15,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v5
         with:
-          node-version: lts/*
+          node-version: "lts/*"
           cache: "yarn"
           cache-dependency-path: "yarn.lock"
 

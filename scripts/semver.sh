@@ -2,7 +2,7 @@
 set -o pipefail
 
 # Get version number
-yarn release --dry-run --no-ci | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+' > .version
+yarn release --dry-run --no-ci | grep -oP 'next release version is \K[0-9]+\.[0-9]+\.[0-9]+' > .version
 
 VERSION=$(cat .version)
 

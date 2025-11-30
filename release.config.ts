@@ -1,8 +1,5 @@
 import type { GlobalConfig } from 'semantic-release'
 export default {
-	repositoryUrl: 'https://github.com/hyldmo/lock-in',
-	tagFormat: 'v${version}',
-	branches: ['main'],
 	plugins: [
 		'@semantic-release/commit-analyzer',
 		'@semantic-release/release-notes-generator',
@@ -22,4 +19,4 @@ export default {
 			}
 		]
 	]
-} satisfies GlobalConfig
+} satisfies Partial<GlobalConfig>
