@@ -21,7 +21,6 @@ async function updateContentScripts(settings: Settings) {
 	const matches = domains.flatMap(domain => [`*://${domain}/*`, `*://*.${domain}/*`])
 
 	try {
-		// 1. Register for future navigations
 		await chrome.scripting.registerContentScripts([
 			{
 				id: 'lock-in-blocker',
@@ -30,24 +29,8 @@ async function updateContentScripts(settings: Settings) {
 				runAt: 'document_start'
 			}
 		])
-
-		// 2. Inject into existing tabs immediately
-		const tabs = await chrome.tabs.query({ url: matches })
-		for (const tab of tabs) {
-			if (tab.id) {
-				try {
-					await chrome.scripting.executeScript({
-						target: { tabId: tab.id },
-						files: [contentScriptPath]
-					})
-				} catch (e) {
-					// Ignore errors (e.g. cannot access restricted tabs)
-					console.warn(`Failed to inject into tab ${tab.id}`, e)
-				}
-			}
-		}
 	} catch (err) {
-		console.error('Failed to update content scripts:', err)
+		console.error('Failed to register content scripts:', err)
 	}
 }
 
