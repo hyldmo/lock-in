@@ -1,4 +1,4 @@
-import ChromeExtension from 'crx'
+import crx3 from 'crx3'
 import fs from 'node:fs'
 import path from 'node:path'
 import type { Plugin } from 'vite'
@@ -17,7 +17,10 @@ export function crxPack(options: Options): Plugin {
 			const rootDir = process.cwd()
 			const distDir = path.join(rootDir, 'dist')
 			const outDir = path.resolve(rootDir, options.outDir)
-			const keyPath = path.join(rootDir, 'key.pem')
+
+			// Default key path
+			let keyPath = path.join(rootDir, 'key.pem')
+			let usingTempKey = false
 
 			if (!fs.existsSync(distDir)) {
 				console.error('dist/ directory not found, skipping crx pack.')
@@ -28,42 +31,33 @@ export function crxPack(options: Options): Plugin {
 				fs.mkdirSync(outDir, { recursive: true })
 			}
 
-			let privateKey: Buffer
-
-			// 1. Try content provided in options
+			// 1. If options.pem provided, write to temp file
 			if (options.pem) {
-				privateKey = Buffer.from(options.pem, 'utf-8')
+				usingTempKey = true
+				keyPath = path.join(rootDir, 'temp.pem')
+				fs.writeFileSync(keyPath, options.pem)
 			}
-			// 2. Try local file
-			else if (fs.existsSync(keyPath)) {
-				privateKey = fs.readFileSync(keyPath)
-			}
-			// 3. Generate new key (only if we can write to disk)
-			else {
-				console.log('Generating new private key (key.pem)...')
-				try {
-					const { execSync } = await import('node:child_process')
-					execSync('openssl genrsa -out key.pem 2048', { cwd: rootDir })
-					privateKey = fs.readFileSync(keyPath)
-				} catch (e) {
-					console.warn('Skipping CRX packing: Failed to find or generate private key.')
-					return
-				}
-			}
+
+			// 2. If no options.pem and no local key.pem, crx3 will generate it at keyPath ('key.pem')
 
 			console.log('Packing extension to .crx...')
-			const crx = new ChromeExtension({ privateKey })
 
 			try {
-				await crx.load(distDir)
-				const crxBuffer = await crx.pack()
-
 				const outputPath = path.join(outDir, options.outFileName)
 
-				fs.writeFileSync(outputPath, crxBuffer)
+				await crx3([distDir], {
+					keyPath: keyPath,
+					crxPath: outputPath
+				})
+
 				console.log(`Successfully created: ${outputPath}`)
 			} catch (err) {
 				console.error('Error packing extension:', err)
+			} finally {
+				// Cleanup temp key if used
+				if (usingTempKey && fs.existsSync(keyPath)) {
+					fs.unlinkSync(keyPath)
+				}
 			}
 		}
 	}
