@@ -3,10 +3,6 @@
 	"description": "A productivity extension helping you to lock in by blocking distracting sites during work hours.",
 	"version": "0.0.0-development",
 	"type": "module",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/hyldmo/lock-in.git"
-	},
 	"license": "MIT",
 	"private": true,
 	"scripts": {
