@@ -47,7 +47,7 @@ function toggleDay(day: number) {
 	saveOptions()
 }
 
-function addSite() {
+async function addSite() {
 	const domain = newSiteInput.trim()
 	if (!domain) return
 
@@ -58,6 +58,23 @@ function addSite() {
 
 	if (settings.blockedSites.some(s => s.domain === cleanDomain)) {
 		alert('Site is already blocked')
+		return
+	}
+
+	// Request permission for the site
+	try {
+		const granted = await chrome.permissions.request({
+			origins: [`*://${cleanDomain}/*`, `*://*.${cleanDomain}/*`]
+		})
+
+		if (!granted) {
+			// If permission denied, don't add the site
+			return
+		}
+	} catch (err) {
+		const error = err as Error
+		console.error(error)
+		alert(error.message)
 		return
 	}
 
@@ -74,9 +91,18 @@ function addSite() {
 	saveOptions()
 }
 
-function removeSite(domain: string) {
+async function removeSite(domain: string) {
 	settings.blockedSites = settings.blockedSites.filter(s => s.domain !== domain)
 	saveOptions()
+
+	// Clean up permissions
+	try {
+		await chrome.permissions.remove({
+			origins: [`*://${domain}/*`, `*://*.${domain}/*`]
+		})
+	} catch (err) {
+		console.error('Error removing permission:', err)
+	}
 }
 
 function addAllowedPath(site: SiteBlock) {
