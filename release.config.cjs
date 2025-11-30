@@ -25,8 +25,8 @@ module.exports = {
 			{
 				assets: [
 					{
-						path: `dist/release-${process.env.VERSION}.zip`,
-						label: `Package v${process.env.VERSION}`
+						path: process.env.RELEASE_PATH || 'dry-run.zip',
+						label: `Chrome Web Extension v${process.env.VERSION}`
 					}
 				]
 			}
