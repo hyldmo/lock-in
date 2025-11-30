@@ -1,33 +1,27 @@
-Sure, here is the revised privacy policy:
+# Privacy Policy
 
-Privacy Policy
+**Last Updated:** November 30, 2025
 
-This privacy policy applies to the Vivino Chrome extension, which is a tool that allows users to pull data from Vivino, a wine rating and review website.
+## 1. Introduction
+This Privacy Policy applies to the **Lock In** Chrome extension. We value your privacy and are committed to protecting it. This policy explains how our extension handles your data.
 
-1. What data do we collect?
+## 2. Data Collection and Usage
+**We do not collect, store, transmit, or sell your personal data.**
 
-The Vivino Chrome extension does not collect any data from you. The extension only accesses the data that is already stored on Vivino.
+- **Local Storage:** All user settings, schedules, and lists of blocked sites are stored locally on your device using the Chrome Storage API (`chrome.storage.sync`). This data is synced across your own signed-in Chrome browsers by Google's infrastructure but is never accessible to us or any third parties.
+- **Website Data:** The extension checks the URLs you visit locally within your browser to enforce your blocking rules. This information is processed entirely on your device and is **never** transmitted to external servers.
 
-2. How do we use your data?
+## 3. Third-Party Services
+The extension does not use any third-party analytics, tracking services, or external databases. It operates entirely standalone.
 
-The Vivino Chrome extension does not use any of your data. The extension simply displays the data that is already stored on Vivino.
+## 4. Permissions
+The extension requests the following permissions to function:
+- **Storage:** To save your preferences locally.
+- **Scripting / Host Permissions:** To technically enforce website blocking on the specific sites you choose to block.
 
-3. Who do we share your data with?
+## 5. Contact Us
+If you have any questions about this Privacy Policy or the extension's practices, please file an issue on our GitHub repository:
+[https://github.com/hyldmo/lock-in/issues](https://github.com/hyldmo/lock-in/issues)
 
-The Vivino Chrome extension sends the names of the wines you view on vinmonoplet.no to Vivino. Their usage of that data is subject to their [privacy policy](https://www.vivino.com/privacy).
-
-4. How do we protect your data?
-
-The Vivino Chrome extension does not store any data, so there is no need to protect it.
-
-5. How to contact us
-
-If you have any questions about this privacy policy, please [file an issue](https://github.com/hyldmo/lock-in/issues/new).
-
-6. Changes to this privacy policy
-
-We may update this privacy policy from time to time. The most recent version of the privacy policy will always be available on our website.
-
-7. Effective date
-
-This privacy policy is effective as of July 20, 2023.
+## 6. Changes to This Policy
+We may update this Privacy Policy to reflect changes in our practices or legal requirements. We encourage you to review this page periodically for the latest information on our privacy practices.
