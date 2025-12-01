@@ -115,34 +115,32 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 </script>
 
 <Card title="Blocked Websites">
-  <div class="pb-6 border-b border-slate-100 bg-slate-50/30 mb-0!">
-    <div class="flex gap-3">
-      <div class="relative grow">
-        <Input
-          type="text"
-          placeholder="example.com"
-          list="commonSites"
-          bind:value={newSiteInput}
-          on:keypress={(e) => e.key === 'Enter' && addSite()}
-        />
-        <datalist id="commonSites">
-          <option value="facebook.com"></option>
-          <option value="x.com"></option>
-          <option value="instagram.com"></option>
-          <option value="youtube.com"></option>
-          <option value="reddit.com"></option>
-          <option value="linkedin.com"></option>
-          <option value="tiktok.com"></option>
-          <option value="netflix.com"></option>
-        </datalist>
-      </div>
-      <Button on:click={addSite}>
-        Block Site
-      </Button>
-    </div>
-  </div>
+	<div class="pb-6 border-b border-slate-100 bg-slate-50/30 mb-0!">
+		<div class="flex gap-3">
+			<div class="relative grow">
+				<Input
+					type="text"
+					placeholder="example.com"
+					list="commonSites"
+					bind:value={newSiteInput}
+					on:keypress={(e) => e.key === 'Enter' && addSite()}
+				/>
+				<datalist id="commonSites">
+					<option value="facebook.com"></option>
+					<option value="x.com"></option>
+					<option value="instagram.com"></option>
+					<option value="youtube.com"></option>
+					<option value="reddit.com"></option>
+					<option value="linkedin.com"></option>
+					<option value="tiktok.com"></option>
+					<option value="netflix.com"></option>
+				</datalist>
+			</div>
+			<Button on:click={addSite}>Block Site</Button>
+		</div>
+	</div>
 
-  <div class="divide-y divide-slate-100">
+	<div class="divide-y divide-slate-100">
     {#each settings.blockedSites as site (site.domain)}
       <div class="py-6 hover:bg-slate-50 transition-colors group -mx-6 px-6">
         <div class="flex justify-between items-start mb-4">

@@ -28,9 +28,9 @@ const days = [
 </script>
 
 <Card title="Schedule">
-  <div>
-    <span class="block text-sm font-medium text-slate-700 mb-3">Active Days</span>
-    <div class="flex flex-wrap gap-2">
+	<div>
+		<span class="block text-sm font-medium text-slate-700 mb-3">Active Days</span>
+		<div class="flex flex-wrap gap-2">
       {#each days as day}
         <label class="cursor-pointer relative">
           <input
@@ -49,34 +49,30 @@ const days = [
         </label>
       {/each}
     </div>
-  </div>
+	</div>
 
-  <div class="flex gap-6 items-end">
-    <div class="space-y-1">
-      <span class="block text-sm font-medium text-slate-700">Time Range</span>
-      <div class="flex items-center gap-2">
-        <Input
-          type="time"
-          bind:value={settings.schedule.startTime}
-          on:change={onSave}
-          disabled={settings.schedule.allDay}
-        />
-        <span class="text-slate-400">to</span>
-        <Input
-          type="time"
-          bind:value={settings.schedule.endTime}
-          on:change={onSave}
-          disabled={settings.schedule.allDay}
-        />
-      </div>
-    </div>
+	<div class="flex gap-6 items-end">
+		<div class="space-y-1">
+			<span class="block text-sm font-medium text-slate-700">Time Range</span>
+			<div class="flex items-center gap-2">
+				<Input
+					type="time"
+					bind:value={settings.schedule.startTime}
+					on:change={onSave}
+					disabled={settings.schedule.allDay}
+				/>
+				<span class="text-slate-400">to</span>
+				<Input
+					type="time"
+					bind:value={settings.schedule.endTime}
+					on:change={onSave}
+					disabled={settings.schedule.allDay}
+				/>
+			</div>
+		</div>
 
-    <div class="flex items-center h-full pb-2">
-      <Toggle
-        bind:checked={settings.schedule.allDay}
-        on:change={onSave}
-        label="All Day"
-      />
-    </div>
-  </div>
+		<div class="flex items-center h-full pb-2">
+			<Toggle bind:checked={settings.schedule.allDay} on:change={onSave} label="All Day"/>
+		</div>
+	</div>
 </Card>

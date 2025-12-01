@@ -45,6 +45,17 @@
 			"enabled": true
 		}
 	},
+	"html": {
+		// "experimentalFullSupportEnabled": true, // pending https://github.com/biomejs/biome/issues/8020
+		"formatter": {
+			"enabled": true,
+			"selfCloseVoidElements": "always",
+			"indentScriptAndStyle": false
+		},
+		"linter": {
+			"enabled": true
+		}
+	},
 	"css": {
 		"parser": {
 			"tailwindDirectives": true

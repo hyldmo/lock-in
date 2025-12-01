@@ -28,12 +28,6 @@ $: classes =
 		: `${baseStyles} ${variants[variant]} ${sizes[size]} ${$$props.class || ''}`
 </script>
 
-<button
-  {type}
-  class={classes}
-  {disabled}
-  {title}
-  on:click
->
-  <slot />
+<button {type} class={classes} {disabled} {title} on:click>
+	<slot />
 </button>

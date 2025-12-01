@@ -22,7 +22,7 @@ jobs:
           cache-dependency-path: "yarn.lock"
 
       - run: yarn --immutable
-      - run: yarn lint
+      - run: yarn biome ci
       - run: yarn lint:tsc
 
       - name: Get version number
