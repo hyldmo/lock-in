@@ -10,3 +10,5 @@ node_modules/
 
 temp_crx/
 *.pem
+credentials.json
+client_secret_*.json
