@@ -1,7 +1,7 @@
-import path from 'node:path'
 import { crx } from '@crxjs/vite-plugin'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import zip from 'vite-plugin-zip-pack'
 import { createManifest } from './manifest.config'
@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
 
 function startCase(str: string) {
 	return str
-		.split(' ')
+		.split(/[-_\s]+/g)
 		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
 		.join(' ')
 }
