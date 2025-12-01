@@ -51,7 +51,7 @@ const days = [
     </div>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+  <div class="flex gap-6 items-end">
     <div class="space-y-1">
       <span class="block text-sm font-medium text-slate-700">Time Range</span>
       <div class="flex items-center gap-2">
@@ -71,7 +71,7 @@ const days = [
       </div>
     </div>
 
-    <div class="flex items-center h-full pt-6">
+    <div class="flex items-center h-full pb-2">
       <Toggle
         bind:checked={settings.schedule.allDay}
         on:change={onSave}

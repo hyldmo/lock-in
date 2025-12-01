@@ -115,7 +115,7 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 </script>
 
 <Card title="Blocked Websites">
-  <div class="pb-6 border-b border-slate-100 bg-slate-50/30 -mx-6 px-6 -mt-6 pt-6">
+  <div class="pb-6 border-b border-slate-100 bg-slate-50/30 mb-0!">
     <div class="flex gap-3">
       <div class="relative grow">
         <Input
