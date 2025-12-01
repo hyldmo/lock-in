@@ -12,7 +12,8 @@
 		"lint:fix": "biome check --write . --unsafe",
 		"lint:tsc": "tsc -p tsconfig.json",
 		"format": "biome format --write .",
-		"release": "semantic-release --config ./release.config.js"
+		"release": "semantic-release --config ./release.config.js",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.8",
