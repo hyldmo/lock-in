@@ -141,111 +141,107 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 	</div>
 
 	<div class="divide-y divide-slate-100">
-    {#each settings.blockedSites as site (site.domain)}
-      <div class="py-6 hover:bg-slate-50 transition-colors group -mx-6 px-6">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
-            <div class="mt-1">
-              <Checkbox
-                bind:checked={site.allowAllSubpaths}
-                on:change={onSave}
-                label="Allow all subpaths"
-                class="text-xs text-slate-500 hover:text-slate-700 transition-colors"
-              />
-            </div>
-          </div>
-          <Button
-            variant="danger"
-            class="text-slate-400 hover:text-red-600 p-1"
-            on:click={() => removeSite(site.domain)}
-            title="Remove site"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </Button>
-        </div>
+		{#each settings.blockedSites as site (site.domain)}
+			<div class="py-6 hover:bg-slate-50 transition-colors group -mx-6 px-6">
+				<div class="flex justify-between items-baseline gap-2 mb-4">
+					<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
+					<Checkbox
+						bind:checked={site.allowAllSubpaths}
+						on:change={onSave}
+						label="Allow all subpaths"
+						class="text-xs text-slate-500 hover:text-slate-700 transition-colors"
+					/>
+					<Button
+						variant="danger"
+						class="text-slate-400 hover:text-red-600 p-1 ml-auto"
+						on:click={() => removeSite(site.domain)}
+						title="Remove site"
+						>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+						</svg>
+					</Button>
+				</div>
 
-        {#if !site.allowAllSubpaths}
-          <div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
-            <!-- Allowed Paths List -->
-            {#if site.allowedPaths.length > 0}
-              <div class="space-y-2">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Exceptions (Allowed)</div>
-                <div class="flex flex-wrap gap-2">
-                  {#each site.allowedPaths as path}
-                    <Badge
-                      label={path}
-                      variant="success"
-                      onRemove={() => removeAllowedPath(site, path)}
-                    />
-                  {/each}
-                </div>
-              </div>
-            {/if}
+				{#if !site.allowAllSubpaths}
+					<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
+						<!-- Allowed Paths List -->
+						{#if site.allowedPaths.length > 0}
+							<div class="space-y-2">
+								<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Exceptions (Allowed)</div>
+								<div class="flex flex-wrap gap-2">
+									{#each site.allowedPaths as path}
+										<Badge
+											label={path}
+											variant="success"
+											onRemove={() => removeAllowedPath(site, path)}
+										/>
+									{/each}
+								</div>
+							</div>
+						{/if}
 
-            <!-- Add Allowed Path -->
-            <div class="flex gap-2 items-center">
-              <Input
-                type="text"
-                class="grow px-3 py-1.5 text-sm"
-                placeholder="/allow/this/path"
-                bind:value={allowedPathInputs[site.domain]}
-                on:keypress={(e) => e.key === 'Enter' && addAllowedPath(site)}
-              />
-              <Button
-                variant="secondary"
-                size="sm"
-                on:click={() => addAllowedPath(site)}
-              >
-                Add Exception
-              </Button>
-            </div>
-          </div>
-        {:else}
-          <div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
-            <!-- Blocked Paths List -->
-            {#if site.blockedPaths.length > 0}
-              <div class="space-y-2">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Specific Blocks</div>
-                <div class="flex flex-wrap gap-2">
-                  {#each site.blockedPaths as path}
-                    <Badge
-                      label={path}
-                      variant="danger"
-                      onRemove={() => removeBlockedPath(site, path)}
-                    />
-                  {/each}
-                </div>
-              </div>
-            {/if}
+						<!-- Add Allowed Path -->
+						<div class="flex gap-2 items-center">
+							<Input
+								type="text"
+								class="grow px-3 py-1.5 text-sm"
+								placeholder="/pathname or /regex/ supported"
+								bind:value={allowedPathInputs[site.domain]}
+								on:keypress={(e) => e.key === 'Enter' && addAllowedPath(site)}
+							/>
+							<Button
+								variant="secondary"
+								size="sm"
+								on:click={() => addAllowedPath(site)}
+							>
+								Add Exception
+							</Button>
+						</div>
+					</div>
+				{:else}
+					<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
+						<!-- Blocked Paths List -->
+						{#if site.blockedPaths.length > 0}
+							<div class="space-y-2">
+								<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Specific Blocks</div>
+								<div class="flex flex-wrap gap-2">
+									{#each site.blockedPaths as path}
+										<Badge
+											label={path}
+											variant="danger"
+											onRemove={() => removeBlockedPath(site, path)}
+										/>
+									{/each}
+								</div>
+							</div>
+						{/if}
 
-            <!-- Add Blocked Path -->
-            <div class="flex gap-2 items-center">
-              <Input
-                type="text"
-                class="grow px-3 py-1.5 text-sm"
-                placeholder="/block/only/this"
-                bind:value={blockedPathInputs[site.domain]}
-                on:keypress={(e) => e.key === 'Enter' && addBlockedPath(site)}
-              />
-              <Button
-                variant="secondary"
-                size="sm"
-                on:click={() => addBlockedPath(site)}
-              >
-                Add Block
-              </Button>
-            </div>
-          </div>
-        {/if}
-      </div>
-    {/each}
-    {#if settings.blockedSites.length === 0}
-      <div class="p-8 text-center text-slate-500 text-sm">
-        No sites blocked yet. Add one above to get started.
-      </div>
-    {/if}
-  </div>
+						<!-- Add Blocked Path -->
+						<div class="flex gap-2 items-center">
+							<Input
+								type="text"
+								class="grow px-3 py-1.5 text-sm"
+								placeholder="/pathname or /regex/ supported"
+								bind:value={blockedPathInputs[site.domain]}
+								on:keypress={(e) => e.key === 'Enter' && addBlockedPath(site)}
+							/>
+							<Button
+								variant="secondary"
+								size="sm"
+								on:click={() => addBlockedPath(site)}
+							>
+								Add Block
+							</Button>
+						</div>
+					</div>
+				{/if}
+			</div>
+		{/each}
+		{#if settings.blockedSites.length === 0}
+			<div class="p-8 text-center text-slate-500 text-sm">
+				No sites blocked yet. Add one above to get started.
+			</div>
+		{/if}
+	</div>
 </Card>
