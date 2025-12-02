@@ -7,15 +7,9 @@ function enforceBlock(flashEnabled: boolean) {
 	// Stop further loading
 	window.stop()
 
-	// Function to create and show overlay
 	const showBlock = () => {
-		// Replace content
 		document.documentElement.innerHTML = ''
-
-		// Create overlay
 		const overlay = createBlockOverlay(flashEnabled)
-
-		// Append to body or documentElement if body doesn't exist yet
 		if (document.body) {
 			document.body.appendChild(overlay)
 		} else {
@@ -23,7 +17,6 @@ function enforceBlock(flashEnabled: boolean) {
 		}
 	}
 
-	// Show immediately if DOM is ready, otherwise wait
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', showBlock)
 	} else {
@@ -31,59 +24,41 @@ function enforceBlock(flashEnabled: boolean) {
 	}
 }
 
-function checkAndBlock() {
-	if (shouldBlock(window.location.href, currentSettings)) {
+function checkAndBlock(url: string = window.location.href) {
+	if (shouldBlock(url, currentSettings)) {
 		enforceBlock(currentSettings.flashEnabled)
 	}
 }
 
-// Intercept history API calls (pushState, replaceState)
-const originalPushState = history.pushState
-const originalReplaceState = history.replaceState
-
-history.pushState = (...args) => {
-	originalPushState.apply(history, args)
-	checkAndBlock()
-}
-
-history.replaceState = (...args) => {
-	originalReplaceState.apply(history, args)
-	checkAndBlock()
-}
-
-// Listen for popstate (back/forward navigation)
-window.addEventListener('popstate', checkAndBlock)
-
-// Listen for hash changes
-window.addEventListener('hashchange', checkAndBlock)
-
-// Intercept link clicks
-document.addEventListener(
-	'click',
-	e => {
-		const target = e.target as HTMLElement
-		const link = target.closest('a')
-		if (link?.href) {
-			try {
-				const url = new URL(link.href)
-				// Only intercept same-origin navigation
-				if (url.origin === window.location.origin) {
-					// Small delay to let navigation happen, then check
-					setTimeout(checkAndBlock, 100)
-				}
-			} catch {
-				// Invalid URL, ignore
-			}
+// Use Navigation API if available (Chrome 102+)
+if ('navigation' in window && window.navigation) {
+	window.navigation.addEventListener('navigate', (e: NavigateEvent) => {
+		if (e.destination?.url) {
+			checkAndBlock(e.destination.url)
 		}
-	},
-	true
-)
+	})
+} else {
+	// Fallback for older browsers
+	const originalPushState = history.pushState
+	const originalReplaceState = history.replaceState
 
-// Main execution - check settings and block if needed
+	history.pushState = (...args) => {
+		originalPushState.apply(history, args)
+		checkAndBlock()
+	}
+
+	history.replaceState = (...args) => {
+		originalReplaceState.apply(history, args)
+		checkAndBlock()
+	}
+
+	window.addEventListener('popstate', () => checkAndBlock())
+	window.addEventListener('hashchange', () => checkAndBlock())
+}
+
+// Main execution
 chrome.storage.sync.get('settings', result => {
 	currentSettings = (result.settings as Settings) || DEFAULT_SETTINGS
-
-	// Check immediately
 	checkAndBlock()
 })
 
