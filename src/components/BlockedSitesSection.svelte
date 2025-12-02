@@ -51,7 +51,7 @@ async function addSite() {
 			domain: cleanDomain,
 			allowedPaths: [],
 			blockedPaths: [],
-			allowAllSubpaths: false
+			allowOnlySubpaths: false
 		}
 	]
 	newSiteInput = ''
@@ -146,9 +146,9 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 				<div class="flex justify-between items-baseline gap-2 mb-4">
 					<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
 					<Checkbox
-						bind:checked={site.allowAllSubpaths}
+						bind:checked={site.allowOnlySubpaths}
 						on:change={onSave}
-						label="Allow all subpaths"
+						label="Allow only subpaths"
 						class="text-xs text-slate-500 hover:text-slate-700 transition-colors"
 					/>
 					<Button
@@ -163,7 +163,7 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 					</Button>
 				</div>
 
-				{#if !site.allowAllSubpaths}
+				{#if !site.allowOnlySubpaths}
 					<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
 						<!-- Allowed Paths List -->
 						{#if site.allowedPaths.length > 0}

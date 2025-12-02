@@ -2,7 +2,7 @@ export interface SiteBlock {
 	domain: string
 	allowedPaths: string[]
 	blockedPaths: string[]
-	allowAllSubpaths?: boolean
+	allowOnlySubpaths?: boolean
 }
 
 export interface Schedule {

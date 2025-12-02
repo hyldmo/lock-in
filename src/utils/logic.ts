@@ -51,9 +51,7 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 		const hostname = urlObj.hostname.replace(/^www\./, '')
 		const pathname = urlObj.pathname
 
-		// Check if domain matches any blocked site
 		// We match if the hostname ends with the blocked domain (e.g. sub.facebook.com matches facebook.com)
-		// or is exact match
 		const matchedBlock = settings.blockedSites.find(site => {
 			return hostname === site.domain || hostname.endsWith(`.${site.domain}`)
 		})
@@ -62,9 +60,10 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			return false
 		}
 
-		// If allowAllSubpaths is enabled, check blocked paths
-		if (matchedBlock.allowAllSubpaths) {
-			// If any blocked path matches the current path, block it
+		if (matchedBlock.allowOnlySubpaths) {
+			if (pathname === '/' || pathname === '') {
+				return true
+			}
 			const isBlocked = matchedBlock.blockedPaths?.some(blockedPath => {
 				return matchesPath(pathname, blockedPath)
 			})
