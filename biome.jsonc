@@ -13,13 +13,29 @@
 		"lineWidth": 120,
 		"attributePosition": "auto",
 		"bracketSpacing": true,
-		"includes": ["**", "!**/*.cjs", "!**/package.json"]
+		"includes": ["**", "!**/package.json"]
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
+			"complexity": {
+				"noExcessiveNestedTestSuites": "error",
+				"noUselessStringRaw": "error",
+				"noUselessStringConcat": "error",
+				"useSimplifiedLogicExpression": "error",
+				"useWhile": "error"
+			},
+			"correctness": {
+				"noUndeclaredDependencies": "warn"
+			},
 			"suspicious": {
-				"noConsole": "error"
+				"noConsole": "error",
+				"noConstantBinaryExpressions": "error",
+				"noDuplicateTestHooks": "error",
+				"noEmptyBlockStatements": "error",
+				"noExportsInTest": "error",
+				"noFocusedTests": "warn",
+				"noMisplacedAssertion": "error"
 			},
 			"nursery": {
 				"useSortedClasses": {

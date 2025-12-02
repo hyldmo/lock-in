@@ -74,10 +74,7 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			}
 
 			// Otherwise, check explicit blocks
-			const isBlocked = matchedBlock.blockedPaths?.some(blockedPath => {
-				return matchesPath(pathname, blockedPath)
-			})
-			return isBlocked || false
+			return matchedBlock.blockedPaths.some(blockedPath => matchesPath(pathname, blockedPath))
 		}
 
 		// Case 2: Allow all subpaths is DISABLED (Default Strict Mode)
