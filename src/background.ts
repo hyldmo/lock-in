@@ -1,5 +1,6 @@
 import contentScriptPath from './main?script'
 import { DEFAULT_SETTINGS, type Settings } from './types'
+import { log } from './utils'
 
 // Open options page when extension icon is clicked
 chrome.action.onClicked.addListener(() => {
@@ -30,7 +31,7 @@ async function updateContentScripts(settings: Settings) {
 			}
 		])
 	} catch (err) {
-		console.error('Failed to register content scripts:', err)
+		log.debugError('Failed to register content scripts:', err)
 	}
 }
 

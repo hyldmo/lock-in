@@ -1,4 +1,5 @@
 import type { Schedule, Settings } from '../types/index'
+import { log } from './log'
 
 export function isWithinSchedule(schedule: Schedule): boolean {
 	const now = new Date()
@@ -88,7 +89,7 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 
 		return !isAllowed
 	} catch (e) {
-		console.error('Error parsing URL:', e)
+		log.debugError('Error parsing URL:', e)
 		return false
 	}
 }

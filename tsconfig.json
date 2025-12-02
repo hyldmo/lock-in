@@ -11,7 +11,7 @@
 		"allowJs": true,
 		"checkJs": true,
 
-		"module": "ES6",
+		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		"target": "ESNext",
 		"esModuleInterop": true,

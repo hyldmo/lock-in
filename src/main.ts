@@ -1,9 +1,10 @@
 import { DEFAULT_SETTINGS, type Settings } from './types'
-import { createBlockOverlay, shouldBlock } from './utils'
+import { createBlockOverlay, log, shouldBlock } from './utils'
 
 let currentSettings: Settings = DEFAULT_SETTINGS
 
 function enforceBlock(settings: Settings) {
+	log.debug('Enforcing block')
 	// Stop further loading
 	window.stop()
 
@@ -25,14 +26,19 @@ function enforceBlock(settings: Settings) {
 }
 
 function checkAndBlock(url: string = window.location.href) {
+	log.debug(`Checking URL: ${url}`)
 	if (shouldBlock(url, currentSettings)) {
+		log.debug(`Should block: ${url}`)
 		enforceBlock(currentSettings)
+	} else {
+		log.debug(`Allowed: ${url}`)
 	}
 }
 
 if ('navigation' in window && window.navigation) {
 	window.navigation.addEventListener('navigate', e => {
 		if (e.destination?.url) {
+			log.debug(`Navigation event to: ${e.destination.url}`)
 			checkAndBlock(e.destination.url)
 		}
 	})
@@ -57,6 +63,7 @@ if ('navigation' in window && window.navigation) {
 
 // Main execution
 chrome.storage.sync.get('settings', result => {
+	log.debug(`Loaded settings: ${result.settings}`)
 	currentSettings = (result.settings as Settings) || DEFAULT_SETTINGS
 	checkAndBlock()
 })
@@ -64,6 +71,7 @@ chrome.storage.sync.get('settings', result => {
 // Listen for settings changes
 chrome.storage.onChanged.addListener(changes => {
 	if (changes.settings) {
+		log.debug(`Settings changed: ${changes.settings.newValue}`)
 		currentSettings = (changes.settings.newValue as Settings) || DEFAULT_SETTINGS
 		checkAndBlock()
 	}

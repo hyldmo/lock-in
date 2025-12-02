@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noConsole: TODO: Move this to its own package */
 import fs from 'node:fs'
 import path from 'node:path'
 import crx3 from 'crx3'

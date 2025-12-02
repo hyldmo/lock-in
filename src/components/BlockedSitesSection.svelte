@@ -1,6 +1,7 @@
 <script lang="ts">
 import { slide } from 'svelte/transition'
 import type { Settings, SiteBlock } from '../types/index'
+import { log } from '../utils'
 import Badge from './Badge.svelte'
 import Button from './Button.svelte'
 import Card from './Card.svelte'
@@ -54,7 +55,7 @@ async function addSite() {
 		}
 	} catch (err) {
 		const error = err as Error
-		console.error(error)
+		log.debugError(error)
 		alert(error.message)
 		return
 	}
@@ -81,7 +82,7 @@ async function removeSite(domain: string) {
 			origins: [`*://${domain}/*`, `*://*.${domain}/*`]
 		})
 	} catch (err) {
-		console.error('Error removing permission:', err)
+		log.debugError('Error removing permission:', err)
 	}
 }
 
