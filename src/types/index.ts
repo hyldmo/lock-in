@@ -16,7 +16,7 @@ export interface Settings {
 	blockedSites: SiteBlock[]
 	schedule: Schedule
 	flashEnabled: boolean
-	customBlockMessage?: string
+	customBlockMessage: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {

@@ -20,7 +20,7 @@ export function isWithinSchedule(schedule: Schedule): boolean {
 }
 
 function matchesPath(pathname: string, pattern: string): boolean {
-	const normalizedPath = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+	const normalizedPath = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
 
 	// Check if pattern is a regex (starts and ends with /)
 	const isRegex = pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2
@@ -36,9 +36,16 @@ function matchesPath(pathname: string, pattern: string): boolean {
 	}
 
 	// String matching: exact match or prefix match
-	const normalizedPattern = pattern.endsWith('/') ? pattern.slice(0, -1) : pattern
+	const normalizedPattern = pattern.endsWith('/') && pattern.length > 1 ? pattern.slice(0, -1) : pattern
 	const cleanPattern = normalizedPattern.startsWith('/') ? normalizedPattern : `/${normalizedPattern}`
-	return normalizedPath === cleanPattern || normalizedPath.startsWith(`${cleanPattern}/`)
+
+	// Exact match
+	if (normalizedPath === cleanPattern) return true
+
+	// Prefix match (only if pattern is not just "/")
+	if (cleanPattern !== '/' && normalizedPath.startsWith(`${cleanPattern}/`)) return true
+
+	return false
 }
 
 export function shouldBlock(url: string, settings: Settings): boolean {
@@ -64,14 +71,17 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			if (pathname === '/' || pathname === '') {
 				return true
 			}
+
+			// Otherwise, check explicit blocks
 			const isBlocked = matchedBlock.blockedPaths?.some(blockedPath => {
 				return matchesPath(pathname, blockedPath)
 			})
 			return isBlocked || false
 		}
 
-		// Check allowed paths
-		// If any allowed path matches the current path, allow it
+		// Case 2: Allow all subpaths is DISABLED (Default Strict Mode)
+		// Meaning: The site is generally BLOCKED, except for allowedPaths.
+
 		const isAllowed = matchedBlock.allowedPaths.some(allowedPath => {
 			return matchesPath(pathname, allowedPath)
 		})
