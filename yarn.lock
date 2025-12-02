@@ -4103,6 +4103,7 @@ __metadata:
     type-fest: "npm:^5.2.0"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.2.4"
+    vite-plugin-crx3: "npm:^1.0.2"
     vite-plugin-zip-pack: "npm:^1.2.4"
     vitest: "npm:^4.0.15"
   languageName: unknown
@@ -6343,6 +6344,17 @@ __metadata:
   version: 7.0.0
   resolution: "validate-npm-package-name@npm:7.0.0"
   checksum: 10/e0c686bb57cd574928d696d6b784cff51999bf3a0db194658616e3e7dc4d0a2ad2c89a13f74b715322b6355dafd68453e6ac6ad0d64a5fb26fbfb9e1ca607fc5
+  languageName: node
+  linkType: hard
+
+"vite-plugin-crx3@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "vite-plugin-crx3@npm:1.0.2"
+  dependencies:
+    crx3: "npm:^2.0.0"
+  peerDependencies:
+    vite: ^6.0.0 || ^7.0.0
+  checksum: 10/fae9e8dfa997b108b095f8ec781341e9bf60404064677be76fed189a8d6ddf78f50303ebef8976ce3c61e6d63d88f414fd5850073995daa42b74f6ddf4bc39e3
   languageName: node
   linkType: hard
 

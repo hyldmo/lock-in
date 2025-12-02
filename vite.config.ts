@@ -3,10 +3,10 @@ import { crx } from '@crxjs/vite-plugin'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
+import { crx3 } from 'vite-plugin-crx3'
 import zip from 'vite-plugin-zip-pack'
 import { createManifest } from './manifest.config'
 import pkg from './package.json'
-import { crxPack } from './vite-plugin-crx-pack'
 
 export default defineConfig(({ mode }) => {
 	const version = process.env.PACKAGE_VERSION || pkg.version.replace('-development', '')
@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
 			}),
 			crx({ manifest }),
 			zip({ outDir: 'release', outFileName: `crx-${pkg.name}-${version}.zip` }),
-			crxPack({
+			crx3({
 				outDir: 'release',
 				outFileName: `${pkg.name}-${version}.crx`,
 				pem: process.env.CRX_PRIVATE_KEY
