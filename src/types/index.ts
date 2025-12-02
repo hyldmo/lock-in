@@ -16,6 +16,7 @@ export interface Settings {
 	blockedSites: SiteBlock[]
 	schedule: Schedule
 	flashEnabled: boolean
+	customBlockMessage?: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -26,5 +27,6 @@ export const DEFAULT_SETTINGS: Settings = {
 		days: [1, 2, 3, 4, 5], // Mon-Fri
 		allDay: false
 	},
-	flashEnabled: false
+	flashEnabled: false,
+	customBlockMessage: ''
 }

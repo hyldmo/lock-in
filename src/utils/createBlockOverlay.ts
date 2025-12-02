@@ -1,4 +1,4 @@
-export function createBlockOverlay(flashEnabled: boolean): HTMLDivElement {
+export function createBlockOverlay(flashEnabled: boolean, customMessage?: string): HTMLDivElement {
 	const overlay = document.createElement('div')
 	Object.assign(overlay.style, {
 		position: 'fixed',
@@ -18,7 +18,7 @@ export function createBlockOverlay(flashEnabled: boolean): HTMLDivElement {
 		textTransform: 'uppercase'
 	})
 
-	overlay.innerText = 'YOU NEED TO LOCK IN'
+	overlay.innerText = customMessage || 'YOU NEED TO LOCK IN'
 
 	if (flashEnabled) {
 		const style = document.createElement('style')

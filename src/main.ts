@@ -3,13 +3,13 @@ import { createBlockOverlay, shouldBlock } from './utils'
 
 let currentSettings: Settings = DEFAULT_SETTINGS
 
-function enforceBlock(flashEnabled: boolean) {
+function enforceBlock(settings: Settings) {
 	// Stop further loading
 	window.stop()
 
 	const showBlock = () => {
 		document.documentElement.innerHTML = ''
-		const overlay = createBlockOverlay(flashEnabled)
+		const overlay = createBlockOverlay(settings.flashEnabled, settings.customBlockMessage)
 		if (document.body) {
 			document.body.appendChild(overlay)
 		} else {
@@ -26,7 +26,7 @@ function enforceBlock(flashEnabled: boolean) {
 
 function checkAndBlock(url: string = window.location.href) {
 	if (shouldBlock(url, currentSettings)) {
-		enforceBlock(currentSettings.flashEnabled)
+		enforceBlock(currentSettings)
 	}
 }
 
