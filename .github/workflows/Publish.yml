@@ -24,6 +24,7 @@ jobs:
       - run: yarn --immutable
       - run: yarn biome ci
       - run: yarn lint:tsc
+      - run: yarn test
 
       - name: Get version number
         id: semver

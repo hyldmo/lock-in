@@ -11,6 +11,7 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write . --unsafe",
 		"lint:tsc": "tsc -p tsconfig.json",
+		"test": "vitest run",
 		"format": "biome format --write .",
 		"release": "semantic-release --config ./release.config.js",
 		"prepare": "husky"
@@ -34,7 +35,8 @@
 		"type-fest": "^5.2.0",
 		"typescript": "^5.9.3",
 		"vite": "^7.2.4",
-		"vite-plugin-zip-pack": "^1.2.4"
+		"vite-plugin-zip-pack": "^1.2.4",
+		"vitest": "^4.0.15"
 	},
 	"commitlint": {
 		"parserPreset": "conventional-changelog-conventionalcommits",
