@@ -25,6 +25,7 @@
 		"@tsconfig/svelte": "^5.0.6",
 		"@types/chrome": "^0.1.31",
 		"@types/node": "^24.10.1",
+		"@typescript-eslint/types": "^8.48.1",
 		"crx3": "^2.0.0",
 		"husky": "^9.1.7",
 		"semantic-release": "~25.0.2",

@@ -5,6 +5,7 @@
 
 		"strict": true,
 		"verbatimModuleSyntax": true,
+		"isolatedModules": true,
 		"downlevelIteration": true,
 
 		"allowJs": true,
@@ -14,8 +15,7 @@
 		"moduleResolution": "Bundler",
 		"target": "ESNext",
 		"esModuleInterop": true,
-		"skipLibCheck": true
+		"skipLibCheck": false
 	},
-	"files": ["src/types/globals.d.ts"],
 	"include": ["src/**/*", "*.ts", "release.config.js"]
 }

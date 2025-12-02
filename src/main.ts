@@ -30,9 +30,8 @@ function checkAndBlock(url: string = window.location.href) {
 	}
 }
 
-// Use Navigation API if available (Chrome 102+)
 if ('navigation' in window && window.navigation) {
-	window.navigation.addEventListener('navigate', (e: NavigateEvent) => {
+	window.navigation.addEventListener('navigate', e => {
 		if (e.destination?.url) {
 			checkAndBlock(e.destination.url)
 		}
