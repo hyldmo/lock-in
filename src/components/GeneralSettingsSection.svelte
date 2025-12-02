@@ -18,7 +18,7 @@ export let onSave: () => void
 				class="font-medium"
 			/>
 			<p class="ml-[1.35rem] text-sm text-slate-500">
-				Shows a visual effect when a blocked site is accessed during focus hours.
+				Shows a visual effect when a blocked site is accessed during focus hours
 			</p>
 		</div>
 
@@ -27,7 +27,7 @@ export let onSave: () => void
 				Custom Block Message
 			</label>
 			<p class="text-sm text-slate-500">
-				Text to display when a site is blocked.
+				Text to display when a site is blocked
 			</p>
 			<Input
 				id="customMessage"

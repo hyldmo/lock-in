@@ -16,6 +16,9 @@ let newSiteInput = ''
 // Track which sites have expanded settings
 let expandedSites: Set<string> = new Set()
 
+// Sort blocked sites alphabetically by domain
+$: sortedBlockedSites = [...settings.blockedSites].sort((a, b) => a.domain.localeCompare(b.domain))
+
 // Helpers for path inputs
 let allowedPathInputs: Record<string, string> = {}
 let blockedPathInputs: Record<string, string> = {}
@@ -156,10 +159,32 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 	</div>
 
 	<div class="divide-y divide-slate-100">
-		{#each settings.blockedSites as site (site.domain)}
+		{#each sortedBlockedSites as site (site.domain)}
 			<div class="py-6 hover:bg-slate-50 transition-colors group -mx-6 px-6">
 				<div class="flex justify-between items-center gap-2">
-					<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
+					<div class="flex items-center gap-3 flex-1 min-w-0">
+						<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
+						{#if !expandedSites.has(site.domain)}
+							{@const pathsToShow = site.allowOnlySubpaths ? site.blockedPaths : site.allowedPaths}
+							{@const previewPaths = pathsToShow.slice(0, 4)}
+							{#if previewPaths.length > 0}
+								<div class="flex flex-wrap items-center gap-1.5">
+									{#each previewPaths as path}
+										<Badge
+											label={path}
+											variant={site.allowOnlySubpaths ? 'danger' : 'success'}
+											class="text-xs"
+										/>
+									{/each}
+									{#if pathsToShow.length > 4}
+										<span class="text-xs text-slate-400 px-1.5 py-0.5">
+											+{pathsToShow.length - 4} more
+										</span>
+									{/if}
+								</div>
+							{/if}
+						{/if}
+					</div>
 					<div class="flex items-center gap-2 ml-auto">
 						{#if expandedSites.has(site.domain)}
 							<Checkbox
@@ -271,7 +296,7 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 				{/if}
 			</div>
 		{/each}
-		{#if settings.blockedSites.length === 0}
+		{#if sortedBlockedSites.length === 0}
 			<div class="p-8 text-center text-slate-500 text-sm">
 				No sites blocked yet. Add one above to get started.
 			</div>
