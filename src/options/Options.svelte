@@ -13,12 +13,6 @@ let statusTimeout: number
 onMount(() => {
 	chrome.storage.sync.get('settings', result => {
 		settings = (result.settings as Settings) || DEFAULT_SETTINGS
-		// Initialize blockedPaths for existing sites that don't have it
-		settings.blockedSites = settings.blockedSites.map(site => ({
-			...site,
-			allowedPaths: site.allowedPaths || [],
-			blockedPaths: site.blockedPaths || []
-		}))
 	})
 })
 

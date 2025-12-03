@@ -1,12 +1,12 @@
 <script lang="ts">
 import { slide } from 'svelte/transition'
-import type { Settings, SiteBlock } from '../types/index'
+import type { PathRule, Settings, SiteBlock } from '../types/index'
 import { log } from '../utils'
 import Badge from './Badge.svelte'
 import Button from './Button.svelte'
 import Card from './Card.svelte'
-import Checkbox from './Checkbox.svelte'
 import Input from './Input.svelte'
+import Toggle from './Toggle.svelte'
 
 export let settings: Settings
 export let onSave: () => void
@@ -20,8 +20,7 @@ let expandedSites: Set<string> = new Set()
 $: sortedBlockedSites = [...settings.blockedSites].sort((a, b) => a.domain.localeCompare(b.domain))
 
 // Helpers for path inputs
-let allowedPathInputs: Record<string, string> = {}
-let blockedPathInputs: Record<string, string> = {}
+let pathInputs: Record<string, string> = {}
 
 function toggleSiteSettings(domain: string) {
 	const newExpanded = new Set(expandedSites)
@@ -67,9 +66,8 @@ async function addSite() {
 		...settings.blockedSites,
 		{
 			domain: cleanDomain,
-			allowedPaths: [],
-			blockedPaths: [],
-			allowOnlySubpaths: false
+			paths: [],
+			listType: 'whitelist'
 		}
 	]
 	newSiteInput = ''
@@ -89,46 +87,60 @@ async function removeSite(domain: string) {
 	}
 }
 
-function addAllowedPath(site: SiteBlock) {
-	const path = allowedPathInputs[site.domain]?.trim()
-	if (!path) return
+function addPath(site: SiteBlock) {
+	const input = pathInputs[site.domain]?.trim()
+	if (!input) return
 
-	const cleanPath = path.startsWith('/') ? path : `/${path}`
-	if (!site.allowedPaths.includes(cleanPath)) {
-		site.allowedPaths = [...site.allowedPaths, cleanPath]
+	let rule: PathRule
+
+	// Regex detection (legacy support + explicit regex entry)
+	if (input.startsWith('/') && input.endsWith('/') && input.length > 2) {
+		rule = { value: input.slice(1, -1), type: 'regex' }
+	}
+	// Glob detection (contains wildcard)
+	else if (input.includes('*') || input.includes('?')) {
+		rule = { value: input, type: 'glob' }
+	}
+	// Exact match
+	else {
+		const cleanPath = input.startsWith('/') ? input : `/${input}`
+		rule = { value: cleanPath, type: 'exact' }
+	}
+
+	// Initialize paths if undefined
+	if (!site.paths) site.paths = []
+
+	// Check for duplicates
+	if (!site.paths.some(r => r.value === rule.value && r.type === rule.type)) {
+		site.paths = [...site.paths, rule]
 		// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
 		settings.blockedSites = settings.blockedSites
-		allowedPathInputs[site.domain] = ''
+		pathInputs[site.domain] = ''
 		onSave()
 	}
 }
 
-function removeAllowedPath(site: SiteBlock, path: string) {
-	site.allowedPaths = site.allowedPaths.filter(p => p !== path)
+function removePath(site: SiteBlock, rule: PathRule) {
+	site.paths = site.paths.filter(r => r !== rule)
 	// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
 	settings.blockedSites = settings.blockedSites
 	onSave()
 }
 
-function addBlockedPath(site: SiteBlock) {
-	const path = blockedPathInputs[site.domain]?.trim()
-	if (!path) return
-
-	const cleanPath = path.startsWith('/') ? path : `/${path}`
-	if (!site.blockedPaths.includes(cleanPath)) {
-		site.blockedPaths = [...site.blockedPaths, cleanPath]
-		// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
-		settings.blockedSites = settings.blockedSites
-		blockedPathInputs[site.domain] = ''
-		onSave()
-	}
-}
-
-function removeBlockedPath(site: SiteBlock, path: string) {
-	site.blockedPaths = site.blockedPaths.filter(p => p !== path)
+function toggleListType(site: SiteBlock) {
+	site.listType = site.listType === 'whitelist' ? 'blacklist' : 'whitelist'
 	// biome-ignore lint/correctness/noSelfAssign: Trigger reactivity in Svelte
 	settings.blockedSites = settings.blockedSites
 	onSave()
+}
+
+function getRuleLabel(rule: PathRule): string {
+	if (rule.type === 'regex') return `/${rule.value}/`
+	return rule.value
+}
+
+function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' {
+	return site.listType === 'blacklist' ? 'danger' : 'success'
 }
 </script>
 
@@ -165,20 +177,20 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 					<div class="flex items-center gap-3 flex-1 min-w-0">
 						<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
 						{#if !expandedSites.has(site.domain)}
-							{@const pathsToShow = site.allowOnlySubpaths ? site.blockedPaths : site.allowedPaths}
-							{@const previewPaths = pathsToShow.slice(0, 4)}
-							{#if previewPaths.length > 0}
+                            {@const rules = site.paths || []}
+                            {@const previewRules = rules.slice(0, 4)}
+							{#if previewRules.length > 0}
 								<div class="flex flex-wrap items-center gap-1.5">
-									{#each previewPaths as path}
+									{#each previewRules as rule}
 										<Badge
-											label={path}
-											variant={site.allowOnlySubpaths ? 'danger' : 'success'}
+											label={getRuleLabel(rule)}
+											variant={getRuleBadgeVariant(site)}
 											class="text-xs"
 										/>
 									{/each}
-									{#if pathsToShow.length > 4}
+									{#if rules.length > 4}
 										<span class="text-xs text-slate-400 px-1.5 py-0.5">
-											+{pathsToShow.length - 4} more
+											+{rules.length - 4} more
 										</span>
 									{/if}
 								</div>
@@ -187,12 +199,15 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 					</div>
 					<div class="flex items-center gap-2 ml-auto">
 						{#if expandedSites.has(site.domain)}
-							<Checkbox
-								bind:checked={site.allowOnlySubpaths}
-								on:change={onSave}
-								label="Allow only subpaths"
-								class="text-xs text-slate-500 hover:text-slate-700 transition-colors mr-2"
-							/>
+							<div class="mr-4 flex items-center gap-2">
+								<span class="text-xs text-slate-500 font-medium">
+									{site.listType === 'whitelist' ? 'Whitelist Mode' : 'Blacklist Mode'}
+								</span>
+								<Toggle
+									checked={site.listType === 'blacklist'}
+									on:change={() => toggleListType(site)}
+								/>
+							</div>
 						{/if}
 						<Button
 							variant="ghost"
@@ -219,79 +234,65 @@ function removeBlockedPath(site: SiteBlock, path: string) {
 				</div>
 
 				{#if expandedSites.has(site.domain)}
+                    {@const rules = site.paths || []}
 					<div class="mt-4" transition:slide={{ duration: 200 }}>
-
-						{#if !site.allowOnlySubpaths}
-							<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
-								<!-- Allowed Paths List -->
-								{#if site.allowedPaths.length > 0}
-									<div class="space-y-2">
-										<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Exceptions (Allowed)</div>
-										<div class="flex flex-wrap gap-2">
-											{#each site.allowedPaths as path}
-												<Badge
-													label={path}
-													variant="success"
-													onRemove={() => removeAllowedPath(site, path)}
-												/>
-											{/each}
-										</div>
-									</div>
+						<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
+							<div class="text-xs text-slate-500 mb-2">
+								{#if site.listType === 'whitelist'}
+									Blocks <strong>everything</strong> on {site.domain} except the paths below.
+								{:else}
+									Allows <strong>everything</strong> on {site.domain} except the paths below.
 								{/if}
-
-								<!-- Add Allowed Path -->
-								<div class="flex gap-2 items-center">
-									<Input
-										type="text"
-										placeholder="/pathname or /regex/ supported"
-										bind:value={allowedPathInputs[site.domain]}
-										on:keypress={(e) => e.key === 'Enter' && addAllowedPath(site)}
-									/>
-									<Button
-										variant="secondary"
-										size="sm"
-										on:click={() => addAllowedPath(site)}
-									>
-										Add Exception
-									</Button>
-								</div>
 							</div>
-						{:else}
-							<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
-								<!-- Blocked Paths List -->
-								{#if site.blockedPaths.length > 0}
-									<div class="space-y-2">
-										<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Specific Blocks</div>
-										<div class="flex flex-wrap gap-2">
-											{#each site.blockedPaths as path}
-												<Badge
-													label={path}
-													variant="danger"
-													onRemove={() => removeBlockedPath(site, path)}
-												/>
-											{/each}
-										</div>
+
+							<!-- Paths List -->
+							{#if rules.length > 0}
+								<div class="space-y-2">
+									<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+										{site.listType === 'whitelist' ? 'Exceptions (Allowed)' : 'Blocked Paths'}
 									</div>
-								{/if}
-
-								<!-- Add Blocked Path -->
-								<div class="flex gap-2 items-center">
-									<Input
-										type="text"
-										placeholder="/pathname or /regex/ supported"
-										bind:value={blockedPathInputs[site.domain]}
-										on:keypress={(e) => e.key === 'Enter' && addBlockedPath(site)}
-									/>
-									<Button
-										variant="secondary"
-										size="sm"
-										on:click={() => addBlockedPath(site)}
-									>
-										Add Block
-									</Button>
+									<div class="flex flex-wrap gap-2">
+										{#each rules as rule}
+											<Badge
+												label={getRuleLabel(rule)}
+												variant={getRuleBadgeVariant(site)}
+                                                onRemove={() => removePath(site, rule)}
+											>
+                                                <!-- Add icon for type -->
+                                                <svelte:fragment slot="prefix">
+                                                    {#if rule.type === 'glob'}
+                                                        <span class="mr-1 text-slate-500" title="Wildcard Pattern">
+                                                            *
+                                                        </span>
+                                                    {:else if rule.type === 'regex'}
+                                                        <span class="mr-1 text-slate-500" title="Regular Expression">
+                                                            .*
+                                                        </span>
+                                                    {/if}
+                                                </svelte:fragment>
+                                            </Badge>
+										{/each}
+									</div>
 								</div>
+							{/if}
+
+							<!-- Add Path -->
+							<div class="flex gap-2 items-center">
+								<Input
+									type="text"
+									placeholder="/pathname, /regex/, or glob*"
+									bind:value={pathInputs[site.domain]}
+									on:keypress={(e) => e.key === 'Enter' && addPath(site)}
+								/>
+								<Button
+									variant="secondary"
+									size="sm"
+									on:click={() => addPath(site)}
+								>
+									{site.listType === 'whitelist' ? 'Add Exception' : 'Add Block'}
+								</Button>
 							</div>
-						{/if}
+						</div>
 					</div>
 				{/if}
 			</div>

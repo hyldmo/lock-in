@@ -1,8 +1,14 @@
+export type PathRuleType = 'exact' | 'regex' | 'glob'
+
+export interface PathRule {
+	value: string
+	type: PathRuleType
+}
+
 export interface SiteBlock {
 	domain: string
-	allowedPaths: string[]
-	blockedPaths: string[]
-	allowOnlySubpaths?: boolean
+	paths: PathRule[]
+	listType: 'whitelist' | 'blacklist'
 }
 
 export interface Schedule {

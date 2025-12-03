@@ -1,4 +1,4 @@
-import type { Schedule, Settings } from '../types/index'
+import type { PathRule, Schedule, Settings } from '../types/index'
 import { log } from './log'
 
 export function isWithinSchedule(schedule: Schedule): boolean {
@@ -20,24 +20,43 @@ export function isWithinSchedule(schedule: Schedule): boolean {
 	return currentTime >= schedule.startTime && currentTime <= schedule.endTime
 }
 
-function matchesPath(pathname: string, pattern: string): boolean {
+function globToRegex(glob: string): RegExp {
+	// Escape regex characters except * and ?
+	const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&')
+	// Convert glob patterns to regex
+	// * matches zero or more characters
+	// ? matches exactly one character
+	const pattern = escaped.replace(/\*/g, '.*').replace(/\?/g, '.')
+	return new RegExp(`^${pattern}$`)
+}
+
+function matchesPath(pathname: string, rule: PathRule): boolean {
 	const normalizedPath = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
 
-	// Check if pattern is a regex (starts and ends with /)
-	const isRegex = pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2
-	if (isRegex) {
+	if (rule.type === 'regex') {
 		try {
-			const regexPattern = pattern.slice(1, -1) // Remove leading and trailing /
-			const regex = new RegExp(regexPattern)
+			const regex = new RegExp(rule.value)
 			return regex.test(normalizedPath)
 		} catch {
-			// Invalid regex, fall back to string matching
+			return false
+		}
+	}
+
+	if (rule.type === 'glob') {
+		try {
+			// Ensure glob starts with / if the path does (usually paths do)
+			// But glob might be "*".
+			// If rule.value doesn't start with /, and we are matching against pathname which does...
+			// For simplicity, let's rely on the user providing the correct glob.
+			const regex = globToRegex(rule.value)
+			return regex.test(normalizedPath)
+		} catch {
 			return false
 		}
 	}
 
 	// String matching: exact match or prefix match
-	const normalizedPattern = pattern.endsWith('/') && pattern.length > 1 ? pattern.slice(0, -1) : pattern
+	const normalizedPattern = rule.value.endsWith('/') && rule.value.length > 1 ? rule.value.slice(0, -1) : rule.value
 	const cleanPattern = normalizedPattern.startsWith('/') ? normalizedPattern : `/${normalizedPattern}`
 
 	// Exact match
@@ -68,17 +87,15 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			return false
 		}
 
-		if (matchedBlock.allowOnlySubpaths) {
-			if (pathname === '/' || pathname === '') {
-				return true
-			}
+		const rules = matchedBlock.paths || []
 
-			// Otherwise, check explicit blocks
-			return matchedBlock.blockedPaths.some(blockedPath => matchesPath(pathname, blockedPath))
+		if (matchedBlock.listType === 'blacklist') {
+			return rules.some(rule => matchesPath(pathname, rule))
 		}
 
-		const isAllowed = matchedBlock.allowedPaths.some(allowedPath => {
-			return matchesPath(pathname, allowedPath)
+		// Whitelist (default behavior)
+		const isAllowed = rules.some(rule => {
+			return matchesPath(pathname, rule)
 		})
 
 		return !isAllowed
