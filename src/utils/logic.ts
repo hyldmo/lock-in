@@ -77,9 +77,6 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 			return matchedBlock.blockedPaths.some(blockedPath => matchesPath(pathname, blockedPath))
 		}
 
-		// Case 2: Allow all subpaths is DISABLED (Default Strict Mode)
-		// Meaning: The site is generally BLOCKED, except for allowedPaths.
-
 		const isAllowed = matchedBlock.allowedPaths.some(allowedPath => {
 			return matchesPath(pathname, allowedPath)
 		})
@@ -89,4 +86,13 @@ export function shouldBlock(url: string, settings: Settings): boolean {
 		log.debugError('Error parsing URL:', e)
 		return false
 	}
+}
+
+export function prefersReducedMotion(): boolean {
+	if (typeof window === 'undefined') {
+		return false
+	}
+
+	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+	return !prefersReducedMotion.matches
 }

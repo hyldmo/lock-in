@@ -1,6 +1,6 @@
 <script lang="ts">
 export let label: string
-export let onRemove: (() => void) | undefined = undefined
+export let onRemove: () => void
 export let variant: 'success' | 'danger' | 'neutral' = 'neutral'
 
 const variants = {
@@ -20,13 +20,11 @@ const buttonVariants = {
 	class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-xs font-medium transition-colors {variants[variant]} {$$props.class || ''}"
 >
 	<span>{label}</span>
-	{#if onRemove}
-		<button
-			class="rounded-full p-0.5 transition-colors cursor-pointer {buttonVariants[variant]}"
-			on:click|stopPropagation={onRemove}
-			title="Remove"
-		>
-			×
-		</button>
-	{/if}
+	<button
+		class="rounded-full p-0.5 transition-colors cursor-pointer {buttonVariants[variant]}"
+		on:click|stopPropagation={onRemove}
+		title="Remove"
+	>
+		×
+	</button>
 </div>

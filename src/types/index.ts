@@ -12,6 +12,8 @@ export interface Schedule {
 	allDay?: boolean
 }
 
+import { prefersReducedMotion } from '../utils/logic'
+
 export interface Settings {
 	blockedSites: SiteBlock[]
 	schedule: Schedule
@@ -27,6 +29,6 @@ export const DEFAULT_SETTINGS: Settings = {
 		days: [1, 2, 3, 4, 5], // Mon-Fri
 		allDay: false
 	},
-	flashEnabled: false,
+	flashEnabled: prefersReducedMotion(),
 	customBlockMessage: ''
 }
