@@ -38,15 +38,13 @@ function showStatus(msg: string) {
 		<p class="ml-2 text-slate-600">Manage your blocked sites and schedule.</p>
 	</header>
 
-	<div class="grid grid-cols-1 lg:grid-cols-[1fr_30rem] lg:grid-rows-[auto_1fr] gap-8 items-start">
-		<div class="lg:row-span-2 lg:col-start-1">
+	<div class="grid grid-cols-1 lg:grid-cols-[1fr_30rem] gap-8 items-start relative">
+		<div class="lg:col-start-1">
 			<BlockedSitesSection bind:settings onSave={saveOptions} />
 		</div>
 
-		<div class="lg:col-start-2">
+		<div class="lg:col-start-2 sticky top-8 space-y-8">
 			<ScheduleSection bind:settings onSave={saveOptions} />
-		</div>
-		<div class="lg:col-start-2">
 			<GeneralSettingsSection bind:settings onSave={saveOptions} />
 		</div>
 	</div>
