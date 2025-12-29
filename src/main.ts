@@ -5,11 +5,9 @@ let currentSettings: Settings = DEFAULT_SETTINGS
 
 function enforceBlock(settings: Settings) {
 	log.debug('Enforcing block')
-	// Stop further loading
-	window.stop()
 
 	const showBlock = () => {
-		document.documentElement.innerHTML = ''
+		// document.documentElement.innerHTML = ''
 		const overlay = createBlockOverlay(settings.flashEnabled, settings.customBlockMessage)
 		if (document.body) {
 			document.body.appendChild(overlay)

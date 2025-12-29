@@ -16,7 +16,7 @@ export function createBlockOverlay(flashEnabled: boolean, customMessage?: string
 		fontSize: '10vw',
 		textAlign: 'center',
 		textTransform: 'uppercase'
-	})
+	} satisfies Partial<CSSStyleDeclaration>)
 
 	overlay.innerText = customMessage || 'YOU NEED TO LOCK IN'
 
