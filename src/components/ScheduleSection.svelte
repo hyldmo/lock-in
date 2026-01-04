@@ -31,24 +31,26 @@ const days = [
 	<div>
 		<span class="block text-sm font-medium text-slate-700 mb-3">Active Days</span>
 		<div class="flex flex-wrap gap-2">
-      {#each days as day}
-        <label class="cursor-pointer relative">
-          <input
-            type="checkbox"
-            class="peer sr-only"
-            checked={settings.schedule.days.includes(day.val)}
-            on:change={() => toggleDay(day.val)}
-          />
-          <div class="px-3 py-1.5 rounded-full text-sm font-medium transition-all
+			{#each days as day}
+				<label class="cursor-pointer relative">
+					<input
+						type="checkbox"
+						class="peer sr-only"
+						checked={settings.schedule.days.includes(day.val)}
+						on:change={() => toggleDay(day.val)}
+					/>
+					<div
+						class="px-3 py-1.5 rounded-full text-sm font-medium transition-all
             bg-slate-50 text-slate-600 border border-slate-200
             hover:border-blue-400
             peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
-            peer-focus:ring-2 peer-focus:ring-blue-200">
-            {day.label}
-          </div>
-        </label>
-      {/each}
-    </div>
+            peer-focus:ring-2 peer-focus:ring-blue-200"
+					>
+						{day.label}
+					</div>
+				</label>
+			{/each}
+		</div>
 	</div>
 
 	<div class="flex gap-6 items-end">
@@ -72,7 +74,7 @@ const days = [
 		</div>
 
 		<div class="flex items-center h-full pb-2">
-			<Toggle bind:checked={settings.schedule.allDay} on:change={onSave} label="All Day"/>
+			<Toggle bind:checked={settings.schedule.allDay} on:change={onSave} label="All Day" />
 		</div>
 	</div>
 </Card>

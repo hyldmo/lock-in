@@ -13,4 +13,15 @@ const textSize = type === 'time' ? 'sm:text-sm' : 'sm:text-sm'
 $: classes = `${baseStyles} ${padding} ${textSize} ${$$props.class || ''}`
 </script>
 
-<input {type} class={classes} {placeholder} {list} {disabled} bind:value on:change on:input on:keypress {...$$restProps} />
+<input
+	{type}
+	class={classes}
+	{placeholder}
+	{list}
+	{disabled}
+	bind:value
+	on:change
+	on:input
+	on:keypress
+	{...$$restProps}
+/>

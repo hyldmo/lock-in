@@ -26,9 +26,7 @@ export let onSave: () => void
 			<label for="customMessage" class="block text-sm font-medium text-slate-700 mb-1">
 				Custom Block Message
 			</label>
-			<p class="text-sm text-slate-500">
-				Text to display when a site is blocked
-			</p>
+			<p class="text-sm text-slate-500">Text to display when a site is blocked</p>
 			<Input
 				id="customMessage"
 				bind:value={settings.customBlockMessage}
