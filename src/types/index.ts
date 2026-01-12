@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from '../utils/logic'
+
 export type PathRuleType = 'exact' | 'regex' | 'glob'
 
 export interface PathRule {
@@ -18,23 +20,57 @@ export interface Schedule {
 	allDay?: boolean
 }
 
-import { prefersReducedMotion } from '../utils/logic'
-
 export interface Settings {
 	blockedSites: SiteBlock[]
-	schedule: Schedule
+	/** @deprecated Use schedules instead */
+	schedule?: Schedule
+	schedules: Schedule[]
 	flashEnabled: boolean
 	customBlockMessage: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {
 	blockedSites: [],
-	schedule: {
-		startTime: '09:00',
-		endTime: '17:00',
-		days: [1, 2, 3, 4, 5], // Mon-Fri
-		allDay: false
-	},
+	schedules: [
+		{
+			startTime: '09:00',
+			endTime: '17:00',
+			days: [1, 2, 3, 4, 5], // Mon-Fri
+			allDay: false
+		}
+	],
 	flashEnabled: prefersReducedMotion(),
 	customBlockMessage: ''
+}
+
+export function migrateSettings(settings: Settings): Settings {
+	if (!settings) {
+		return DEFAULT_SETTINGS
+	}
+
+	if (settings.schedule) {
+		const { schedule, ...rest } = settings
+		const migrated = {
+			...DEFAULT_SETTINGS,
+			...rest,
+			schedules: [schedule]
+		}
+		if (typeof chrome !== 'undefined' && chrome.storage) {
+			chrome.storage.sync.set({ settings: migrated })
+		}
+		return migrated
+	}
+
+	if (!(settings.schedules && Array.isArray(settings.schedules))) {
+		return {
+			...DEFAULT_SETTINGS,
+			...settings,
+			schedules: DEFAULT_SETTINGS.schedules
+		}
+	}
+
+	return {
+		...DEFAULT_SETTINGS,
+		...settings
+	}
 }

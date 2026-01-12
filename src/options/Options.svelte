@@ -4,7 +4,7 @@ import { fly } from 'svelte/transition'
 import BlockedSitesSection from '../components/BlockedSitesSection.svelte'
 import GeneralSettingsSection from '../components/GeneralSettingsSection.svelte'
 import ScheduleSection from '../components/ScheduleSection.svelte'
-import { DEFAULT_SETTINGS, type Settings } from '../types/index'
+import { DEFAULT_SETTINGS, migrateSettings, type Settings } from '../types/index'
 
 let settings: Settings = { ...DEFAULT_SETTINGS }
 let statusMessage = ''
@@ -12,7 +12,7 @@ let statusTimeout: number
 
 onMount(() => {
 	chrome.storage.sync.get('settings', result => {
-		settings = (result.settings as Settings) || DEFAULT_SETTINGS
+		settings = migrateSettings(result.settings as Settings)
 	})
 })
 

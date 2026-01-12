@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, type Settings } from './types'
+import { DEFAULT_SETTINGS, migrateSettings, type Settings } from './types'
 import { createBlockOverlay, log, shouldBlock } from './utils'
 
 let currentSettings: Settings = DEFAULT_SETTINGS
@@ -62,7 +62,7 @@ if ('navigation' in window && window.navigation) {
 // Main execution
 chrome.storage.sync.get('settings', result => {
 	log.debug(`Loaded settings: ${result.settings}`)
-	currentSettings = (result.settings as Settings) || DEFAULT_SETTINGS
+	currentSettings = migrateSettings(result.settings as Settings)
 	checkAndBlock()
 })
 
@@ -70,7 +70,7 @@ chrome.storage.sync.get('settings', result => {
 chrome.storage.onChanged.addListener(changes => {
 	if (changes.settings) {
 		log.debug(`Settings changed: ${changes.settings.newValue}`)
-		currentSettings = (changes.settings.newValue as Settings) || DEFAULT_SETTINGS
+		currentSettings = migrateSettings(changes.settings.newValue as Settings)
 		checkAndBlock()
 	}
 })

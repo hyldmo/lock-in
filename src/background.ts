@@ -1,5 +1,5 @@
 import contentScriptPath from './main?script'
-import { DEFAULT_SETTINGS, type Settings } from './types'
+import { DEFAULT_SETTINGS, migrateSettings, type Settings } from './types'
 import { log } from './utils'
 
 // Open options page when extension icon is clicked
@@ -46,12 +46,12 @@ chrome.storage.onChanged.addListener(changes => {
 // Initial registration
 chrome.runtime.onInstalled.addListener(() => {
 	chrome.storage.sync.get('settings', result => {
-		updateContentScripts((result.settings as Settings) || DEFAULT_SETTINGS)
+		updateContentScripts(migrateSettings(result.settings as Settings))
 	})
 })
 
 chrome.runtime.onStartup.addListener(() => {
 	chrome.storage.sync.get('settings', result => {
-		updateContentScripts((result.settings as Settings) || DEFAULT_SETTINGS)
+		updateContentScripts(migrateSettings(result.settings as Settings))
 	})
 })

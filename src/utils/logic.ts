@@ -69,7 +69,11 @@ function matchesPath(pathname: string, rule: PathRule): boolean {
 }
 
 export function shouldBlock(url: string, settings: Settings): boolean {
-	if (!isWithinSchedule(settings.schedule)) {
+	if (settings.schedules.length === 0) {
+		return false
+	}
+
+	if (!settings.schedules.some(schedule => isWithinSchedule(schedule))) {
 		return false
 	}
 
