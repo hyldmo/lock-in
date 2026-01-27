@@ -1,6 +1,6 @@
 <script lang="ts">
 import { slide } from 'svelte/transition'
-import type { PathRule, Settings, SiteBlock } from '../types/index'
+import type { PathRule, PathRuleType, Settings, SiteBlock } from '../types/index'
 import { log } from '../utils'
 import Badge from './Badge.svelte'
 import Button from './Button.svelte'
@@ -87,22 +87,36 @@ async function removeSite(domain: string) {
 	}
 }
 
+function detectPatternType(input: string): PathRuleType | null {
+	const trimmed = input.trim()
+	if (!trimmed) return null
+
+	// Regex detection (explicit regex entry via /pattern/ syntax)
+	if (trimmed.startsWith('/') && trimmed.endsWith('/') && trimmed.length > 2) {
+		return 'regex'
+	}
+	// Glob detection (contains wildcard)
+	if (trimmed.includes('*') || trimmed.includes('?')) {
+		return 'glob'
+	}
+	// Exact match
+	return 'exact'
+}
+
 function addPath(site: SiteBlock) {
 	const input = pathInputs[site.domain]?.trim()
 	if (!input) return
 
+	const patternType = detectPatternType(input)
+	if (!patternType) return
+
 	let rule: PathRule
 
-	// Regex detection (legacy support + explicit regex entry)
-	if (input.startsWith('/') && input.endsWith('/') && input.length > 2) {
+	if (patternType === 'regex') {
 		rule = { value: input.slice(1, -1), type: 'regex' }
-	}
-	// Glob detection (contains wildcard)
-	else if (input.includes('*') || input.includes('?')) {
+	} else if (patternType === 'glob') {
 		rule = { value: input, type: 'glob' }
-	}
-	// Exact match
-	else {
+	} else {
 		const cleanPath = input.startsWith('/') ? input : `/${input}`
 		rule = { value: cleanPath, type: 'exact' }
 	}
@@ -262,6 +276,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 
 				{#if expandedSites.has(site.domain)}
 					{@const rules = site.paths || []}
+					{@const patternType = detectPatternType(pathInputs[site.domain] || '')}
 					<div class="mt-4" transition:slide={{ duration: 200 }}>
 						<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
 							<div class="text-xs text-slate-500 mb-2">
@@ -292,8 +307,8 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 															*
 														</span>
 													{:else if rule.type === 'regex'}
-														<span class="mr-1 text-slate-500" title="Regular Expression">
-															.*
+														<span class="mr-1 text-amber-700" title="Regular Expression">
+															r
 														</span>
 													{/if}
 												</svelte:fragment>
@@ -305,12 +320,26 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 
 							<!-- Add Path -->
 							<div class="flex gap-2 items-center">
-								<Input
-									type="text"
-									placeholder="/pathname, /regex/, or glob*"
-									bind:value={pathInputs[site.domain]}
-									on:keypress={(e) => e.key === 'Enter' && addPath(site)}
-								/>
+								<div class="relative flex items-center grow">
+									{#if patternType}
+										<div
+											class="absolute left-3 z-10 flex items-center justify-center w-5 h-5 rounded text-xs font-medium pointer-events-none"
+											class:text-amber-700={patternType === 'regex'}
+											class:text-slate-600={patternType === 'glob'}
+											class:text-slate-400={patternType === 'exact'}
+											title={patternType === 'regex' ? 'Regular Expression' : patternType === 'glob' ? 'Glob Pattern' : 'Exact Match'}
+										>
+											{patternType === 'regex' ? 'r' : patternType === 'glob' ? '*' : '='}
+										</div>
+									{/if}
+									<Input
+										type="text"
+										placeholder="/pathname, /regex/, or glob*"
+										bind:value={pathInputs[site.domain]}
+										on:keypress={(e) => e.key === 'Enter' && addPath(site)}
+										class={patternType ? 'pl-9' : ''}
+									/>
+								</div>
 								<Button variant="secondary" size="sm" on:click={() => addPath(site)}>
 									{site.listType === 'whitelist' ? 'Add Exception' : 'Add Block'}
 								</Button>
