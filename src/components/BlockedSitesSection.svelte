@@ -149,7 +149,7 @@ function toggleListType(site: SiteBlock) {
 }
 
 function getRuleLabel(rule: PathRule): string {
-	if (rule.type === 'regex') return `/${rule.value}/`
+	if (rule.type === 'regex') return rule.value
 	return rule.value
 }
 
