@@ -5,16 +5,69 @@ import BlockedSitesSection from '../components/BlockedSitesSection.svelte'
 import GeneralSettingsSection from '../components/GeneralSettingsSection.svelte'
 import ScheduleSection from '../components/ScheduleSection.svelte'
 import { DEFAULT_SETTINGS, migrateSettings, type Settings } from '../types/index'
+import { applyTheme, watchSystemTheme } from '../utils/theme'
 
 let settings: Settings = { ...DEFAULT_SETTINGS }
 let statusMessage = ''
 let statusTimeout: number
+let systemThemeUnwatch: (() => void) | undefined
 
 onMount(() => {
 	chrome.storage.sync.get('settings', result => {
 		settings = migrateSettings(result.settings as Settings)
+		applyTheme(settings.theme)
+
+		// Watch for system theme changes if theme is set to 'system'
+		if (settings.theme === 'system') {
+			systemThemeUnwatch = watchSystemTheme(() => {
+				applyTheme('system')
+			})
+		}
 	})
+
+	// Listen for settings changes from other tabs/windows
+	chrome.storage.onChanged.addListener(changes => {
+		if (changes.settings) {
+			const newSettings = migrateSettings(changes.settings.newValue as Settings)
+			settings = newSettings
+			applyTheme(newSettings.theme)
+
+			// Update system theme watcher
+			if (systemThemeUnwatch) {
+				systemThemeUnwatch()
+				systemThemeUnwatch = undefined
+			}
+
+			if (newSettings.theme === 'system') {
+				systemThemeUnwatch = watchSystemTheme(() => {
+					applyTheme('system')
+				})
+			}
+		}
+	})
+
+	return () => {
+		if (systemThemeUnwatch) {
+			systemThemeUnwatch()
+		}
+	}
 })
+
+$: if (settings.theme) {
+	applyTheme(settings.theme)
+
+	// Update system theme watcher when theme changes
+	if (systemThemeUnwatch) {
+		systemThemeUnwatch()
+		systemThemeUnwatch = undefined
+	}
+
+	if (settings.theme === 'system') {
+		systemThemeUnwatch = watchSystemTheme(() => {
+			applyTheme('system')
+		})
+	}
+}
 
 function saveOptions() {
 	chrome.storage.sync.set({ settings }, () => {
@@ -33,9 +86,9 @@ function showStatus(msg: string) {
 
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
 	<header class="mb-8 text-center flex items-baseline gap-2">
-		<h1 class="text-3xl font-bold text-slate-900 tracking-tight">Lock In</h1>
-		<h2 class="text-lg font-medium text-slate-500 tracking-tight">Settings</h2>
-		<p class="ml-2 text-slate-600">Manage your blocked sites and schedule.</p>
+		<h1 class="text-3xl font-bold text-text-primary tracking-tight">Lock In</h1>
+		<h2 class="text-lg font-medium text-text-secondary tracking-tight">Settings</h2>
+		<p class="ml-2 text-text-secondary">Manage your blocked sites and schedule.</p>
 	</header>
 
 	<div class="grid grid-cols-1 lg:grid-cols-[1fr_30rem] gap-8 items-start relative">
@@ -53,7 +106,7 @@ function showStatus(msg: string) {
 	{#if statusMessage}
 		<div
 			transition:fly={{ y: 20, duration: 300 }}
-			class="fixed bottom-6 right-6 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50"
+			class="fixed bottom-6 right-6 bg-slate-800 dark:bg-slate-700 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

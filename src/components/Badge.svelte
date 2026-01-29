@@ -4,15 +4,16 @@ export let onRemove: (() => void) | undefined = undefined
 export let variant: 'success' | 'danger' | 'neutral' = 'neutral'
 
 const variants = {
-	success: 'bg-green-50 text-green-700 border-green-100 hover:bg-green-100',
-	danger: 'bg-red-50 text-red-700 border-red-100 hover:bg-red-100',
-	neutral: 'bg-slate-50 text-slate-700 border-slate-100 hover:bg-slate-100'
+	success:
+		'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/40',
+	danger: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/40',
+	neutral: 'bg-background text-foreground border-border hover:bg-card'
 }
 
 const buttonVariants = {
-	success: 'hover:text-green-900 hover:bg-green-200',
-	danger: 'hover:text-red-900 hover:bg-red-200',
-	neutral: 'hover:text-slate-900 hover:bg-slate-200'
+	success: 'hover:text-green-900 dark:hover:text-green-200 hover:bg-green-200 dark:hover:bg-green-800',
+	danger: 'hover:text-red-900 dark:hover:text-red-200 hover:bg-red-200 dark:hover:bg-red-800',
+	neutral: 'hover:text-foreground hover:bg-card'
 }
 </script>
 

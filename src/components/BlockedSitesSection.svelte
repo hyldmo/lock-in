@@ -159,7 +159,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 </script>
 
 <Card title="Blocked Websites">
-	<div class="pb-6 border-b border-slate-100 bg-slate-50/30 mb-0!">
+	<div class="pb-6 border-b border-border mb-0!">
 		<div class="flex gap-3">
 			<div class="relative grow">
 				<Input
@@ -184,12 +184,12 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 		</div>
 	</div>
 
-	<div class="divide-y divide-slate-100">
+	<div class="divide-y divide-border">
 		{#each sortedBlockedSites as site (site.domain)}
-			<div class="py-6 hover:bg-slate-50 transition-colors group -mx-6 px-6">
+			<div class="py-6 hover:bg-background transition-colors group -mx-6 px-6">
 				<div class="flex justify-between items-center gap-2">
 					<div class="flex items-center gap-3 flex-1 min-w-0">
-						<h3 class="text-base font-semibold text-slate-900">{site.domain}</h3>
+						<h3 class="text-base font-semibold text-foreground">{site.domain}</h3>
 						{#if !expandedSites.has(site.domain)}
 							{@const rules = site.paths || []}
 							{@const previewRules = rules.slice(0, 4)}
@@ -203,7 +203,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 										/>
 									{/each}
 									{#if rules.length > 4}
-										<span class="text-xs text-slate-400 px-1.5 py-0.5">
+										<span class="text-xs text-muted-foreground px-1.5 py-0.5">
 											+{rules.length - 4} more
 										</span>
 									{/if}
@@ -214,7 +214,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 					<div class="flex items-center gap-2 ml-auto">
 						{#if expandedSites.has(site.domain)}
 							<div class="mr-4 flex items-center gap-2">
-								<span class="text-xs text-slate-500 font-medium">
+								<span class="text-xs text-muted-foreground font-medium">
 									{site.listType === 'whitelist' ? 'Whitelist Mode' : 'Blacklist Mode'}
 								</span>
 								<Toggle
@@ -252,7 +252,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 						</Button>
 						<Button
 							variant="danger"
-							class="text-slate-400 hover:text-red-600 p-1"
+							class="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 p-1"
 							on:click={() => removeSite(site.domain)}
 							title="Remove site"
 						>
@@ -278,8 +278,8 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 					{@const rules = site.paths || []}
 					{@const patternType = detectPatternType(pathInputs[site.domain] || '')}
 					<div class="mt-4" transition:slide={{ duration: 200 }}>
-						<div class="ml-0 pl-4 border-l-2 border-slate-200 space-y-3">
-							<div class="text-xs text-slate-500 mb-2">
+						<div class="ml-0 pl-4 border-l-2 border-border space-y-3">
+							<div class="text-xs text-muted-foreground mb-2">
 								{#if site.listType === 'whitelist'}
 									Blocks <strong>everything</strong> on {site.domain} except the paths below.
 								{:else}
@@ -290,7 +290,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 							<!-- Paths List -->
 							{#if rules.length > 0}
 								<div class="space-y-2">
-									<div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+									<div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
 										{site.listType === 'whitelist' ? 'Exceptions (Allowed)' : 'Blocked Paths'}
 									</div>
 									<div class="flex flex-wrap gap-2">
@@ -303,11 +303,17 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 												<!-- Add icon for type -->
 												<svelte:fragment slot="prefix">
 													{#if rule.type === 'glob'}
-														<span class="mr-1 text-slate-500" title="Wildcard Pattern">
+														<span
+															class="mr-1 text-muted-foreground"
+															title="Wildcard Pattern"
+														>
 															*
 														</span>
 													{:else if rule.type === 'regex'}
-														<span class="mr-1 text-amber-700" title="Regular Expression">
+														<span
+															class="mr-1 text-amber-700 dark:text-amber-400"
+															title="Regular Expression"
+														>
 															r
 														</span>
 													{/if}
@@ -320,22 +326,27 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 
 							<!-- Add Path -->
 							<div class="flex gap-2 items-center">
-								<div class="flex items-stretch grow">
-									<div
-										class="flex font-mono items-center justify-center px-3 border border-r-0 border-slate-300 rounded-l-lg bg-slate-50 text-xs font-medium shrink-0"
-										class:text-amber-700={patternType === 'regex'}
-										class:text-slate-600={patternType === 'glob'}
-										class:text-slate-400={patternType === 'exact' || !patternType}
-										title={patternType === 'regex' ? 'Regular Expression' : patternType === 'glob' ? 'Glob Pattern' : patternType === 'exact' ? 'Exact Match' : 'Enter a path pattern'}
-									>
-										{patternType === 'regex' ? 'r' : patternType === 'glob' ? '*' : patternType === 'exact' ? '=' : '?'}
-									</div>
+								<div class="relative flex items-center grow">
+									{#if patternType}
+										<div
+											class="absolute left-3 z-10 flex items-center justify-center w-5 h-5 rounded text-xs font-medium pointer-events-none"
+											class:text-amber-700={patternType === 'regex'}
+											class:dark:text-amber-400={patternType === 'regex'}
+											class:text-slate-600={patternType === 'glob'}
+											class:dark:text-slate-400={patternType === 'glob'}
+											class:text-slate-400={patternType === 'exact'}
+											class:dark:text-slate-500={patternType === 'exact'}
+											title={patternType === 'regex' ? 'Regular Expression' : patternType === 'glob' ? 'Glob Pattern' : 'Exact Match'}
+										>
+											{patternType === 'regex' ? 'r' : patternType === 'glob' ? '*' : '='}
+										</div>
+									{/if}
 									<Input
 										type="text"
 										placeholder="/pathname, /regex/, or glob*"
 										bind:value={pathInputs[site.domain]}
 										on:keypress={(e) => e.key === 'Enter' && addPath(site)}
-										className="rounded-l-none"
+										className={patternType ? 'pl-9' : ''}
 									/>
 								</div>
 								<Button variant="secondary" size="sm" on:click={() => addPath(site)}>
@@ -348,7 +359,7 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 			</div>
 		{/each}
 		{#if sortedBlockedSites.length === 0}
-			<div class="p-8 text-center text-slate-500 text-sm">
+			<div class="p-8 text-center text-muted-foreground text-sm">
 				No sites blocked yet. Add one above to get started.
 			</div>
 		{/if}

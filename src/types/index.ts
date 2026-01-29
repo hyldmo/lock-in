@@ -27,6 +27,7 @@ export interface Settings {
 	schedules: Schedule[]
 	flashEnabled: boolean
 	customBlockMessage: string
+	theme: 'light' | 'dark' | 'system'
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -40,7 +41,8 @@ export const DEFAULT_SETTINGS: Settings = {
 		}
 	],
 	flashEnabled: prefersReducedMotion(),
-	customBlockMessage: ''
+	customBlockMessage: '',
+	theme: 'system'
 }
 
 export function migrateSettings(settings: Settings): Settings {
@@ -65,12 +67,14 @@ export function migrateSettings(settings: Settings): Settings {
 		return {
 			...DEFAULT_SETTINGS,
 			...settings,
-			schedules: DEFAULT_SETTINGS.schedules
+			schedules: DEFAULT_SETTINGS.schedules,
+			theme: settings.theme ?? DEFAULT_SETTINGS.theme
 		}
 	}
 
 	return {
 		...DEFAULT_SETTINGS,
-		...settings
+		...settings,
+		theme: settings.theme ?? DEFAULT_SETTINGS.theme
 	}
 }

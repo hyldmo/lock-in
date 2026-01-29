@@ -6,10 +6,52 @@ import Input from './Input.svelte'
 
 export let settings: Settings
 export let onSave: () => void
+
+function setTheme(theme: 'light' | 'dark' | 'system') {
+	settings.theme = theme
+	onSave()
+}
 </script>
 
 <Card title="General Settings">
 	<div class="space-y-6">
+		<div class="space-y-2">
+			<label class="block text-sm font-medium text-text-primary mb-1">Theme</label>
+			<p class="text-sm text-text-secondary mb-3">Choose your preferred color theme</p>
+			<div class="flex gap-2">
+				<button
+					type="button"
+					on:click={() => setTheme('light')}
+					class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+						{settings.theme === 'light'
+							? 'bg-blue-600 text-white'
+							: 'bg-card border border-border text-foreground hover:bg-background'}"
+				>
+					Light
+				</button>
+				<button
+					type="button"
+					on:click={() => setTheme('dark')}
+					class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+						{settings.theme === 'dark'
+							? 'bg-blue-600 text-white'
+							: 'bg-card border border-border text-foreground hover:bg-background'}"
+				>
+					Dark
+				</button>
+				<button
+					type="button"
+					on:click={() => setTheme('system')}
+					class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+						{settings.theme === 'system'
+							? 'bg-blue-600 text-white'
+							: 'bg-card border border-border text-foreground hover:bg-background'}"
+				>
+					System
+				</button>
+			</div>
+		</div>
+
 		<div>
 			<Checkbox
 				bind:checked={settings.flashEnabled}
@@ -17,16 +59,16 @@ export let onSave: () => void
 				label='Enable Flashing "Lock In" Screen'
 				class="font-medium"
 			/>
-			<p class="ml-[1.35rem] text-sm text-slate-500">
+			<p class="ml-[1.35rem] text-sm text-text-secondary">
 				Shows a visual effect when a blocked site is accessed during focus hours
 			</p>
 		</div>
 
 		<div class="space-y-2">
-			<label for="customMessage" class="block text-sm font-medium text-slate-700 mb-1">
+			<label for="customMessage" class="block text-sm font-medium text-text-primary mb-1">
 				Custom Block Message
 			</label>
-			<p class="text-sm text-slate-500">Text to display when a site is blocked</p>
+			<p class="text-sm text-text-secondary">Text to display when a site is blocked</p>
 			<Input
 				id="customMessage"
 				bind:value={settings.customBlockMessage}

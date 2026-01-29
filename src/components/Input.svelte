@@ -7,7 +7,7 @@ export let disabled: boolean = false
 export let className: string = ''
 
 const baseStyles =
-	'block w-full border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed'
+	'block w-full border border-border rounded-lg shadow-sm bg-card text-foreground focus:ring-2 focus:ring-blue-500 outline-none transition-shadow disabled:bg-background disabled:text-muted-foreground disabled:cursor-not-allowed'
 const padding = type === 'time' ? 'p-2' : 'px-4 py-2.5'
 const textSize = type === 'time' ? 'sm:text-sm' : 'sm:text-sm'
 

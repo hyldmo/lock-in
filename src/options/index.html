@@ -5,9 +5,17 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16.png" />
 		<link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32.png" />
 		<link rel="icon" type="image/png" sizes="48x48" href="/images/logo-48.png" />
-		<link rel="stylesheet" href="global.css" />
+		<script>
+		// Apply theme immediately to prevent flash of wrong theme
+		const stored = localStorage.getItem('theme')
+		const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+		const theme = stored === 'dark' || (!stored && systemPrefersDark) ? 'dark' : 'light'
+		if (theme === 'dark') {
+			document.body.classList.add('dark')
+		}
+		</script>
 	</head>
-	<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
+	<body>
 		<script type="module" src="index.ts"></script>
 	</body>
 </html>

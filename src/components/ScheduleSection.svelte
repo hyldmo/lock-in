@@ -48,11 +48,11 @@ const days = [
 
 <Card>
 	<div slot="header" class="flex items-center justify-between">
-		<h2 class="text-lg font-semibold text-slate-800">Schedule{settings.schedules.length > 1 ? 's' : ''}</h2>
+		<h2 class="text-lg font-semibold text-text-primary">Schedule{settings.schedules.length > 1 ? 's' : ''}</h2>
 		<button
 			type="button"
 			on:click={addSchedule}
-			class="p-1.5 rounded-lg hover:bg-slate-200 transition-colors text-slate-600 hover:text-slate-900"
+			class="p-1.5 rounded-lg hover:bg-bg-primary transition-colors text-text-secondary hover:text-text-primary"
 			title="Add schedule"
 		>
 			<svg
@@ -69,14 +69,14 @@ const days = [
 
 	<div class="space-y-6">
 		{#each settings.schedules as schedule, index}
-			<div class="space-y-4 {index > 0 ? 'pt-3 border-t border-slate-200' : ''}">
-				<h3 class="flex items-center justify-between text-sm font-medium text-slate-700 mb-3">
+			<div class="space-y-4 {index > 0 ? 'pt-3 border-t border-border' : ''}">
+				<h3 class="flex items-center justify-between text-sm font-medium text-text-primary mb-3">
 					Active Days
 					{#if index > 0}
 						<button
 							type="button"
 							on:click={() => removeSchedule(index)}
-							class="p-1.5 rounded-lg hover:bg-red-50 transition-colors text-slate-400 hover:text-red-600"
+							class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-text-secondary hover:text-red-600 dark:hover:text-red-400"
 							title="Remove schedule"
 						>
 							<svg
@@ -107,9 +107,9 @@ const days = [
 							/>
 							<div
 								class="px-3 py-1.5 rounded-full text-sm font-medium transition-all
-									bg-slate-50 text-slate-600 border border-slate-200
+									bg-background text-muted-foreground border border-border
 									hover:border-blue-400
-									peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
+									peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-600 dark:peer-checked:border-blue-500
 									peer-focus:ring-2 peer-focus:ring-blue-200"
 							>
 								{day.label}
@@ -120,7 +120,7 @@ const days = [
 
 				<div class="flex gap-6 items-end">
 					<div class="space-y-1">
-						<span class="block text-sm font-medium text-slate-700">Time Range</span>
+						<span class="block text-sm font-medium text-text-primary">Time Range</span>
 						<div class="flex items-center gap-2">
 							<Input
 								type="time"
@@ -128,7 +128,7 @@ const days = [
 								on:change={onSave}
 								disabled={schedule.allDay}
 							/>
-							<span class="text-slate-400">to</span>
+							<span class="text-text-secondary">to</span>
 							<Input
 								type="time"
 								bind:value={schedule.endTime}

@@ -6,11 +6,11 @@ export let label: string = ''
 <label class="inline-flex items-center cursor-pointer group select-none {$$props.class || ''}">
 	<input
 		type="checkbox"
-		class="rounded border-slate-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+		class="rounded border-border text-blue-600 shadow-sm focus:ring focus:ring-blue-200 focus:ring-opacity-50"
 		bind:checked
 		on:change
 	/>
 	{#if label}
-		<span class="ml-2 text-sm text-slate-700 group-hover:text-slate-900">{label}</span>
+		<span class="ml-2 text-sm text-muted-foreground group-hover:text-foreground">{label}</span>
 	{/if}
 </label>

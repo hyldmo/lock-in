@@ -1,5 +1,5 @@
 import contentScriptPath from './main?script'
-import { DEFAULT_SETTINGS, migrateSettings, type Settings } from './types'
+import { migrateSettings, type Settings } from './types'
 import { log } from './utils'
 
 // Open options page when extension icon is clicked
