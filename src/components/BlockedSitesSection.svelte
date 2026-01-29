@@ -320,24 +320,22 @@ function getRuleBadgeVariant(site: SiteBlock): 'danger' | 'success' | 'neutral' 
 
 							<!-- Add Path -->
 							<div class="flex gap-2 items-center">
-								<div class="relative flex items-center grow">
-									{#if patternType}
-										<div
-											class="absolute left-3 z-10 flex items-center justify-center w-5 h-5 rounded text-xs font-medium pointer-events-none"
-											class:text-amber-700={patternType === 'regex'}
-											class:text-slate-600={patternType === 'glob'}
-											class:text-slate-400={patternType === 'exact'}
-											title={patternType === 'regex' ? 'Regular Expression' : patternType === 'glob' ? 'Glob Pattern' : 'Exact Match'}
-										>
-											{patternType === 'regex' ? 'r' : patternType === 'glob' ? '*' : '='}
-										</div>
-									{/if}
+								<div class="flex items-stretch grow">
+									<div
+										class="flex font-mono items-center justify-center px-3 border border-r-0 border-slate-300 rounded-l-lg bg-slate-50 text-xs font-medium shrink-0"
+										class:text-amber-700={patternType === 'regex'}
+										class:text-slate-600={patternType === 'glob'}
+										class:text-slate-400={patternType === 'exact' || !patternType}
+										title={patternType === 'regex' ? 'Regular Expression' : patternType === 'glob' ? 'Glob Pattern' : patternType === 'exact' ? 'Exact Match' : 'Enter a path pattern'}
+									>
+										{patternType === 'regex' ? 'r' : patternType === 'glob' ? '*' : patternType === 'exact' ? '=' : '?'}
+									</div>
 									<Input
 										type="text"
 										placeholder="/pathname, /regex/, or glob*"
 										bind:value={pathInputs[site.domain]}
 										on:keypress={(e) => e.key === 'Enter' && addPath(site)}
-										class={patternType ? 'pl-9' : ''}
+										className="rounded-l-none"
 									/>
 								</div>
 								<Button variant="secondary" size="sm" on:click={() => addPath(site)}>
