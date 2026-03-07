@@ -1,5 +1,11 @@
+const OVERLAY_ID = 'lock-in-overlay'
+
 export function createBlockOverlay(flashEnabled: boolean, customMessage?: string): HTMLDivElement {
+	const existing = document.getElementById(OVERLAY_ID) as HTMLDivElement | null
+	if (existing) return existing
+
 	const overlay = document.createElement('div')
+	overlay.id = OVERLAY_ID
 	Object.assign(overlay.style, {
 		position: 'fixed',
 		top: '0',
