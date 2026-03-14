@@ -49,16 +49,39 @@ describe('isWithinSchedule', () => {
 			endTime: '06:00'
 		}
 
-		// Monday 23:00 (In schedule)
+		// Monday 23:00 - evening portion, Monday is active
 		vi.setSystemTime(new Date('2023-10-23T23:00:00'))
 		expect(isWithinSchedule(overnightSchedule)).toBe(true)
 
-		// Monday 05:00 (In schedule)
-		vi.setSystemTime(new Date('2023-10-23T05:00:00'))
+		// Tuesday 05:00 - morning portion, yesterday (Monday) was active
+		vi.setSystemTime(new Date('2023-10-24T05:00:00'))
 		expect(isWithinSchedule(overnightSchedule)).toBe(true)
 
-		// Monday 12:00 (Out of schedule)
+		// Monday 12:00 - outside schedule
 		vi.setSystemTime(new Date('2023-10-23T12:00:00'))
+		expect(isWithinSchedule(overnightSchedule)).toBe(false)
+	})
+
+	it('should not activate morning portion if yesterday was not an active day', () => {
+		const overnightSchedule = {
+			...schedule,
+			startTime: '22:00',
+			endTime: '06:00'
+		}
+
+		// Saturday 05:00 - Friday was active, morning portion should work
+		vi.setSystemTime(new Date('2023-10-28T05:00:00'))
+		expect(new Date('2023-10-28T05:00:00').getDay()).toBe(6) // Saturday
+		expect(isWithinSchedule(overnightSchedule)).toBe(true)
+
+		// Sunday 05:00 - Saturday was NOT active, should not work
+		vi.setSystemTime(new Date('2023-10-29T05:00:00'))
+		expect(new Date('2023-10-29T05:00:00').getDay()).toBe(0) // Sunday
+		expect(isWithinSchedule(overnightSchedule)).toBe(false)
+
+		// Monday 05:00 - Sunday was NOT active, should not work
+		vi.setSystemTime(new Date('2023-10-23T05:00:00'))
+		expect(new Date('2023-10-23T05:00:00').getDay()).toBe(1) // Monday
 		expect(isWithinSchedule(overnightSchedule)).toBe(false)
 	})
 })
