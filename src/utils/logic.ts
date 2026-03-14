@@ -6,15 +6,21 @@ export function isWithinSchedule(schedule: Schedule): boolean {
 	const currentDay = now.getDay()
 	const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
 
-	// Check day
-	if (!schedule.days.includes(currentDay)) {
+	// Handle overnight ranges (e.g. 22:00 to 06:00)
+	if (schedule.startTime > schedule.endTime) {
+		if (currentTime >= schedule.startTime) {
+			return schedule.days.includes(currentDay)
+		}
+		if (currentTime <= schedule.endTime) {
+			const yesterday = (currentDay + 6) % 7
+			return schedule.days.includes(yesterday)
+		}
 		return false
 	}
 
-	// Check time range
-	// Handle overnight ranges (e.g. 22:00 to 06:00)
-	if (schedule.startTime > schedule.endTime) {
-		return currentTime >= schedule.startTime || currentTime <= schedule.endTime
+	// Normal range (e.g. 09:00 to 17:00)
+	if (!schedule.days.includes(currentDay)) {
+		return false
 	}
 
 	return currentTime >= schedule.startTime && currentTime <= schedule.endTime
