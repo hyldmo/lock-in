@@ -107,9 +107,7 @@ function importSettings() {
 		</div>
 
 		<div class="space-y-2">
-			<label class="block text-sm font-medium text-text-primary mb-1">
-				Import / Export
-			</label>
+			<label class="block text-sm font-medium text-text-primary mb-1">Import / Export</label>
 			<p class="text-sm text-text-secondary">Back up or restore your settings</p>
 			<div class="flex gap-2">
 				<button
