@@ -1,0 +1,24 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "lts/*"
+          cache: "yarn"
+          cache-dependency-path: "yarn.lock"
+
+      - run: yarn --immutable
+      - run: yarn biome ci
+      - run: yarn lint:tsc
+      - run: yarn test
