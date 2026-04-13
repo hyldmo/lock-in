@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Settings } from '../types/index'
+import { DEFAULT_SETTINGS, migrateSettings, type Settings } from '../types/index'
 import Card from './Card.svelte'
 import Checkbox from './Checkbox.svelte'
 import Input from './Input.svelte'
@@ -10,6 +10,35 @@ export let onSave: () => void
 function setTheme(theme: 'light' | 'dark' | 'system') {
 	settings.theme = theme
 	onSave()
+}
+
+function exportSettings() {
+	const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' })
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement('a')
+	a.href = url
+	a.download = 'lock-in-settings.json'
+	a.click()
+	URL.revokeObjectURL(url)
+}
+
+function importSettings() {
+	const input = document.createElement('input')
+	input.type = 'file'
+	input.accept = '.json'
+	input.onchange = async () => {
+		const file = input.files?.[0]
+		if (!file) return
+		try {
+			const text = await file.text()
+			const imported = migrateSettings(JSON.parse(text) as Settings)
+			settings = imported
+			onSave()
+		} catch {
+			alert('Invalid settings file')
+		}
+	}
+	input.click()
 }
 </script>
 
@@ -75,6 +104,27 @@ function setTheme(theme: 'light' | 'dark' | 'system') {
 				on:input={onSave}
 				placeholder="YOU NEED TO LOCK IN"
 			/>
+		</div>
+
+		<div class="space-y-2">
+			<label class="block text-sm font-medium text-text-primary mb-1">Import / Export</label>
+			<p class="text-sm text-text-secondary">Back up or restore your settings</p>
+			<div class="flex gap-2">
+				<button
+					type="button"
+					on:click={exportSettings}
+					class="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-card border border-border text-foreground hover:bg-background"
+				>
+					Export
+				</button>
+				<button
+					type="button"
+					on:click={importSettings}
+					class="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-card border border-border text-foreground hover:bg-background"
+				>
+					Import
+				</button>
+			</div>
 		</div>
 	</div>
 </Card>
