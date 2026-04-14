@@ -1,6 +1,6 @@
 import contentScriptPath from './main?script'
 import { migrateSettings, type Settings } from './types'
-import { log } from './utils'
+import { domainMatchPatterns, log } from './utils'
 
 // Open options page when extension icon is clicked
 chrome.action.onClicked.addListener(() => {
@@ -19,7 +19,7 @@ async function updateContentScripts(settings: Settings) {
 
 	if (domains.length === 0) return
 
-	const matches = domains.flatMap(domain => [`*://${domain}/*`, `*://*.${domain}/*`])
+	const matches = domains.flatMap(domainMatchPatterns)
 
 	try {
 		await chrome.scripting.registerContentScripts([

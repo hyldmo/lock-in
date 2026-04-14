@@ -1,6 +1,11 @@
 import type { PathRule, Schedule, Settings } from '../types/index'
 import { log } from './log'
 
+/** Returns match patterns for a domain (e.g. `*://example.com/*` and `*://*.example.com/*`) */
+export function domainMatchPatterns(domain: string): string[] {
+	return [`*://${domain}/*`, `*://*.${domain}/*`]
+}
+
 export function isWithinSchedule(schedule: Schedule): boolean {
 	const now = new Date()
 	const currentDay = now.getDay()

@@ -98,7 +98,7 @@ function showStatus(msg: string) {
 
 		<div class="lg:col-start-2 sticky top-8 space-y-8">
 			<ScheduleSection bind:settings onSave={saveOptions} />
-			<GeneralSettingsSection bind:settings onSave={saveOptions} />
+			<GeneralSettingsSection bind:settings onSave={saveOptions} onStatus={showStatus} />
 		</div>
 	</div>
 

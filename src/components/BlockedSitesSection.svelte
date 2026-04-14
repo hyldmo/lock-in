@@ -1,7 +1,7 @@
 <script lang="ts">
 import { slide } from 'svelte/transition'
 import type { PathRule, PathRuleType, Settings, SiteBlock } from '../types/index'
-import { log } from '../utils'
+import { domainMatchPatterns, log } from '../utils'
 import Badge from './Badge.svelte'
 import Button from './Button.svelte'
 import Card from './Card.svelte'
@@ -49,7 +49,7 @@ async function addSite() {
 	// Request permission for the site
 	try {
 		const granted = await chrome.permissions.request({
-			origins: [`*://${cleanDomain}/*`, `*://*.${cleanDomain}/*`]
+			origins: domainMatchPatterns(cleanDomain)
 		})
 
 		if (!granted) {
@@ -80,7 +80,7 @@ async function removeSite(domain: string) {
 
 	try {
 		await chrome.permissions.remove({
-			origins: [`*://${domain}/*`, `*://*.${domain}/*`]
+			origins: domainMatchPatterns(domain)
 		})
 	} catch (err) {
 		log.debugError('Error removing permission:', err)
