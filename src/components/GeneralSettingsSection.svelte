@@ -1,6 +1,6 @@
 <script lang="ts">
 import { migrateSettings, type Settings } from '../types/index'
-import { log } from '../utils'
+import { domainMatchPatterns, log } from '../utils'
 import Card from './Card.svelte'
 import Checkbox from './Checkbox.svelte'
 import Input from './Input.svelte'
@@ -19,7 +19,7 @@ async function syncPermissions() {
 	const domains = settings.blockedSites.map(s => s.domain)
 	if (domains.length === 0) return
 
-	const origins = domains.flatMap(d => [`*://${d}/*`, `*://*.${d}/*`])
+	const origins = domains.flatMap(domainMatchPatterns)
 	try {
 		const granted = await chrome.permissions.request({ origins })
 		if (granted) {
