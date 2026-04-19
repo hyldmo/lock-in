@@ -6,21 +6,9 @@ let currentSettings: Settings = DEFAULT_SETTINGS
 function enforceBlock(settings: Settings) {
 	log.debug('Enforcing block')
 
-	const showBlock = () => {
-		// document.documentElement.innerHTML = ''
-		const overlay = createBlockOverlay(settings.flashEnabled, settings.customBlockMessage)
-		if (document.body) {
-			document.body.appendChild(overlay)
-		} else {
-			document.documentElement.appendChild(overlay)
-		}
-	}
-
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', showBlock)
-	} else {
-		showBlock()
-	}
+	const overlay = createBlockOverlay(settings.flashEnabled, settings.customBlockMessage)
+	const parent = document.body || document.documentElement
+	parent.appendChild(overlay)
 }
 
 function checkAndBlock(url: string = window.location.href) {
